@@ -273,4 +273,10 @@ router.get("/prices", async (req, res) => {
     );
 });
 
+
+// Uncomment code below in order to run code locally using ` node api.js `
+/*const port = process.env.PORT || 9000;
+
+app.listen(port, () => console.log('Server is running...\n'));
+*/
 module.exports.handler = serverless(app);
