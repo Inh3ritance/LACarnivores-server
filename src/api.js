@@ -6,14 +6,16 @@ const stripe = require("stripe")("sk_test_NEQdDYQEGCNzJ01s8oW3njZq00eNYSwGJo");
 const bodyParser = require('body-parser');
 const cors = require('cors')({ origin: true });
 const { uuid } = require('uuidv4');
-app.use(cors);
 // parse application/x-www-form-urlencoded
 app.use(bodyParser.json());
+
+app.use(cors({
+    origin: 'https://www.lacarnivores.com'
+}));
 
 router.get('/Hello', (req, res) => {
     res.json({
         "hello": "hi!"
-
     });
 });
 
