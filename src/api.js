@@ -1,8 +1,9 @@
+require('dotenv').config();
 const express = require("express");
 const serverless = require("serverless-http");
 const app = express();
 const router = express.Router();
-const stripe = require("stripe")("sk_test_NEQdDYQEGCNzJ01s8oW3njZq00eNYSwGJo");
+const stripe = require("stripe")(process.env.API_KEY);
 const bodyParser = require('body-parser');
 const cors = require('cors')({ origin: true });
 const { uuid } = require('uuidv4');
