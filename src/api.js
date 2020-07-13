@@ -10,11 +10,14 @@ const { uuid } = require('uuidv4');
 app.use(bodyParser.json());
 
 app.use(function(req, res, next) {
-    res.header("Access-Control-Allow-Origin", "https://www.lacarnivores.com/*");
-    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-    next();
+    var allowedOrigins = ['https://www.lacarnivores.com/', 'https://www.lacarnivores.com/Checkout'];
+    var origin = req.headers.origin;
+    if(allowedOrigins.indexOf(origin) > -1){
+         res.setHeader('Access-Control-Allow-Origin', origin);
+    }
+    return next();
   });
-
+  
 router.get('/Hello', (req, res) => {
     res.json({
         "hello": "hi!"
