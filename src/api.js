@@ -209,7 +209,7 @@ function updateOrder(chargeID, cartInfo) {
 }
 
 // Get all products
-app.get("/products", async (request, response) => {
+router.get("/products", async (request, response) => {
     stripe.products.list(
         { active: true },
         (err, list) => {
@@ -218,7 +218,7 @@ app.get("/products", async (request, response) => {
     )
 });
 
-app.get("/skus", async (request, response) => {
+router.get("/skus", async (request, response) => {
     stripe.skus.list(
         { active: true },
         (err, skus) => {
@@ -228,7 +228,7 @@ app.get("/skus", async (request, response) => {
     );
 });
 
-app.post("/charge", async (req, res) => {
+router.post("/charge", async (req, res) => {
     let data = {
         personal_info: {
             name: req.body.name,
@@ -258,11 +258,11 @@ app.post("/charge", async (req, res) => {
 });
 
 // Just Testing out API with this GET method.
-app.get("/charge", (req, res) => {
+router.get("/charge", (req, res) => {
     res.send("Hello The GET request worked if u see this");
 });
 
-app.get("/prices", async (req, res) => {
+router.get("/prices", async (req, res) => {
     stripe.prices.list(
         { product: req.query.id },
         (err, price) => {
@@ -272,9 +272,5 @@ app.get("/prices", async (req, res) => {
         }
     );
 });
-
-const port = process.env.PORT || 4000;
-
-app.listen(port, () => console.log('Server is running...\n'));
 
 module.exports.handler = serverless(app);
