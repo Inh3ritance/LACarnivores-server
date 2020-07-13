@@ -10,7 +10,7 @@ const { uuid } = require('uuidv4');
 app.use(bodyParser.json());
 
 app.use(function(req, res, next) {
-    var allowedOrigins = ['https://www.lacarnivores.com/', 'https://www.lacarnivores.com/Checkout'];
+    var allowedOrigins = ['https://www.lacarnivores.com', 'https://www.lacarnivores.com/Checkout'];
     var origin = req.headers.origin;
     if(allowedOrigins.indexOf(origin) > -1){
          res.setHeader('Access-Control-Allow-Origin', origin);
