@@ -9,9 +9,18 @@ const { uuid } = require('uuidv4');
 // parse application/x-www-form-urlencoded
 app.use(bodyParser.json());
 
-app.use(cors({
-    origin: 'https://www.lacarnivores.com'
-}));
+const whitelist = ['https://www.lacarnivores.com', 'https://www.lacarnivores.com/Checkout']
+const corsOptions = {
+  origin: function(origin, callback) {
+    if (whitelist.indexOf(origin) !== -1) {
+      callback(null, true)
+    } else {
+      callback(new Error('Not allowed by CORS'))
+    }
+  }
+}
+
+app.use(corsOptions);
 
 router.get('/Hello', (req, res) => {
     res.json({
