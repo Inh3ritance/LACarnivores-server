@@ -6,6 +6,8 @@ const router = express.Router();
 const stripe = require("stripe")(process.env.API_KEY);
 const bodyParser = require('body-parser');
 const cors = require('cors')({ origin: true });
+const fetch = require('node-fetch');
+const RECAPTCHA_KEY = (process.env.RECAPTCHA_KEY);
 const { uuid } = require('uuidv4');
 // parse application/x-www-form-urlencoded
 app.use(bodyParser.json());
@@ -283,6 +285,13 @@ router.get("/prices", async (req, res) => {
         }
     );
 });
+
+router.post("/verify", (req, res) => {
+    var VERIFY_URL = `https://www.google.com/recaptcha/api/siteverify?secret=${RECAPTCHA_KEY}&response=${req.body['g-recaptcha-response']}`;
+    return fetch(VERIFY_URL, { method: 'POST' })
+      .then(res => res.json())
+      .then(json => res.send(json));
+  });
 
 
 // Uncomment code below in order to run code locally using ` node api.js `
