@@ -300,8 +300,11 @@ router.post("/sendEmail", (req, res) => {
 router.post("/verify", (req, res) => {
     var VERIFY_URL = `https://www.google.com/recaptcha/api/siteverify?secret=${RECAPTCHA_KEY}&response=${req.body['g-recaptcha-response']}`;
     return fetch(VERIFY_URL, { method: 'POST' })
-      .then(res => res.json())
-      .then(json => res.send(json));
+      .then(response => {
+            res.send(response);   
+      }).catch(err => {
+            console.log(err);
+      });
 });
 
 
