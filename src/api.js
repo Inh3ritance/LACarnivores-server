@@ -1,4 +1,5 @@
 require('dotenv').config();
+require('cors')({ origin: true });
 
 const express = require("express");
 const app = express();
@@ -22,6 +23,7 @@ let transporter = nodemailer.createTransport({
     }
 });
 
+app.use('/.netlify/functions/api', router);
 app.use((req, res, next) => {
     const allowedOrigins = ['https://www.lacarnivores.com', 'https://www.lacarnivores.com/Checkout', 'https://www.lacarnivores.com/Contact'];
     const origin = req.headers.origin;
@@ -36,7 +38,6 @@ app.use((req, res, next) => {
 });
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
-app.use('/.netlify/functions/api', router);
 
 // Creates Customer => creates source => creates charge
 async function CreateCustomer(data, res) {
