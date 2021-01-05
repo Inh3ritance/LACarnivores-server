@@ -1,6 +1,6 @@
 require('dotenv').config();
 
-const cors = require('cors')({ origin: true });
+const cors = require('cors');
 const express = require("express");
 const app = express();
 const router = express.Router();
@@ -23,20 +23,19 @@ let transporter = nodemailer.createTransport({
     }
 });
 
-app.use(cors);
+const allowlist = ['https://www.lacarnivores.com', 'https://www.lacarnivores.com/Checkout','https://www.lacarnivores.com/Contact'];
+const corsOptionsDelegate = (req, callback) => {
+  var corsOptions;
+  if (allowlist.indexOf(req.header('Origin')) !== -1)
+    corsOptions = { origin: true }
+  else
+    corsOptions = { origin: false }
+  callback(null, corsOptions) 
+}
+
+
 app.use('/.netlify/functions/api', router);
-app.use((req, res, next) => {
-    const allowedOrigins = ['https://www.lacarnivores.com', 'https://www.lacarnivores.com/Checkout','https://www.lacarnivores.com/Contact'];
-    const origin = req.headers.origin;
-    if(allowedOrigins.indexOf(origin) > -1){
-         res.setHeader('Access-Control-Allow-Origin', origin);
-         res.header('Access-Control-Allow-Methods','POST, GET');
-		 res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-		 res.header('Access-Control-Allow-Headers', 'X-Requested-With, Content-Type');
-		 res.header('Access-Control-Allow-Credentials', true);
-    }
-    return next();
-});
+app.use(cors(corsOptionsDelegate));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
