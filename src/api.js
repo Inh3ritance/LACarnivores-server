@@ -1,4 +1,5 @@
 require('dotenv').config();
+require('cors')({ origin: true });
 const express = require("express");
 const app = express();
 const router = express.Router();
