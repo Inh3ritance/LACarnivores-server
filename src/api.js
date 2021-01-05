@@ -1,20 +1,23 @@
 require('dotenv').config();
 const express = require("express");
-const serverless = require("serverless-http");
 const app = express();
 const router = express.Router();
-const stripe = require("stripe")(process.env.API_KEY);
+const serverless = require("serverless-http");
+const nodemailer = require('nodemailer');
 const bodyParser = require('body-parser');
-const cors = require('cors')({ origin: true });
 const fetch = require('node-fetch');
+const stripe = require("stripe")(process.env.API_KEY);
 const RECAPTCHA_KEY = (process.env.RECAPTCHA_KEY);
+const EMAIL = (process.env.EMAIL);
+const PASSWORD = (process.env.PASSWORD);
+
 const { uuid } = require('uuidv4');
-// parse application/x-www-form-urlencoded
+
 app.use(bodyParser.json());
 
 app.use((req, res, next) => {
-    var allowedOrigins = ['https://www.lacarnivores.com', 'https://www.lacarnivores.com/Checkout'];
-    var origin = req.headers.origin;
+    const allowedOrigins = ['https://www.lacarnivores.com', 'https://www.lacarnivores.com/Checkout'];
+    const origin = req.headers.origin;
     if(allowedOrigins.indexOf(origin) > -1){
          res.setHeader('Access-Control-Allow-Origin', origin);
          res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
@@ -22,15 +25,17 @@ app.use((req, res, next) => {
 		 res.header('Access-Control-Allow-Credentials', true);
     }
     return next();
-  });
-  
-router.get('/Hello', (req, res) => {
-    res.json({
-        "hello": "hi!"
-    });
 });
 
 app.use('/.netlify/functions/api', router);
+
+let transporter = nodemailer.createTransport({
+    service: 'gmail',
+    auth: {
+        user: EMAIL,
+        pass: PASSWORD
+    }
+});
 
 // Creates Customer => creates source => creates charge
 async function CreateCustomer(data, res) {
@@ -82,7 +87,6 @@ async function updateCard(data, customerID, cardID) {
 
         },
     ).then((card) => {
-        //console.log("Card", card);
     }).catch((err) => {
         console.log(err);
     })
@@ -106,7 +110,6 @@ function getSku(productID) {
     return stripe.skus.list({
         product: productID
     }).then((result) => {
-        //console.log(result.data);
         return Promise.resolve(result.data[0].id);
     }).catch(e => {
         console.log(e);
@@ -182,7 +185,6 @@ async function createOrder(data, customerID, res) {
                 },
             },
         }).then((result) => {
-            //console.log(result);
             res.sendStatus(200);
             payOrder(result.id, customerID, data);
         }).catch(e => {
@@ -199,7 +201,6 @@ function payOrder(orderID, customerID, data) {
     stripe.orders.pay(orderID,
         { customer: customerID },
         (err, order) => {
-            //console.log(err);
             updateOrder(order.charge, data.cart);
         });
 }
@@ -266,13 +267,7 @@ router.post("/charge", async (req, res) => {
     data.card.token.card.address_state = req.body.state;
     data.card.token.card.name = req.body.name;
     //console.log("DATA", data.card);
-    //Check if the customer email already in our Stripe customer database, Create Customer if no email is linked
     CreateCustomer(data,res);
-});
-
-// Just Testing out API with this GET method.
-router.get("/charge", (req, res) => {
-    res.send("Hello The GET request worked if u see this");
 });
 
 router.get("/prices", async (req, res) => {
@@ -286,12 +281,27 @@ router.get("/prices", async (req, res) => {
     );
 });
 
+router.post("/sendEmail", (req, res) => {
+    let mailOptions = {
+        from: req.body.email,
+        to: EMAIL,
+        subject: req.body.subject,
+        text: req.body.text
+    };
+    transporter.sendMail(mailOptions)
+        .then((response) => {
+            console.log('Email Sent');
+        }).catch((err) => {
+            console.log("Error: ", err)
+    });
+});
+
 router.post("/verify", (req, res) => {
     var VERIFY_URL = `https://www.google.com/recaptcha/api/siteverify?secret=${RECAPTCHA_KEY}&response=${req.body['g-recaptcha-response']}`;
     return fetch(VERIFY_URL, { method: 'POST' })
       .then(res => res.json())
       .then(json => res.send(json));
-  });
+});
 
 
 // Uncomment code below in order to run code locally using ` node api.js `
