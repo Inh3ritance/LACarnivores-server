@@ -25,7 +25,7 @@ let transporter = nodemailer.createTransport({
 
 app.use('/.netlify/functions/api', router);
 app.use((req, res, next) => {
-    const allowedOrigins = ['https://www.lacarnivores.com', 'https://www.lacarnivores.com/Checkout', 'https://www.lacarnivores.com/Contact'];
+    const allowedOrigins = ['https://www.lacarnivores.com', 'https://www.lacarnivores.com/Checkout'];
     const origin = req.headers.origin;
     if(allowedOrigins.indexOf(origin) > -1){
          res.setHeader('Access-Control-Allow-Origin', origin);
