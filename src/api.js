@@ -1,5 +1,5 @@
 require('dotenv').config();
-require('cors')({ origin: true });
+const cors = require('cors')({ origin: true });
 const express = require("express");
 const app = express();
 const router = express.Router();
@@ -15,6 +15,8 @@ const PASSWORD = (process.env.PASSWORD);
 const { uuid } = require('uuidv4');
 
 app.use(bodyParser.json());
+
+app.use(cors);
 
 app.use((req, res, next) => {
     const allowedOrigins = ['https://www.lacarnivores.com', 'https://www.lacarnivores.com/Checkout', 'https://www.lacarnivores.com/Contact'];
