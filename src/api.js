@@ -282,7 +282,7 @@ router.get("/prices", async (req, res) => {
     );
 });
 
-router.post("/sendEmail", (req, res) => {
+router.post("/sendEmail", async (req, res) => {
     let mailOptions = {
         from: req.body.email,
         to: EMAIL,
@@ -297,10 +297,10 @@ router.post("/sendEmail", (req, res) => {
     });
 });
 
-router.post("/verify", (req, res) => {
+router.post("/verify", async (req, res) => {
     var VERIFY_URL = `https://www.google.com/recaptcha/api/siteverify?secret=${RECAPTCHA_KEY}&response=${req.body['g-recaptcha-response']}`;
     return fetch(VERIFY_URL, { method: 'POST' })
-    .then(res => res.send(res.json()))
+    .then(result => res.send(result.json()))
     .catch(err => console.log(err));
 });
 
