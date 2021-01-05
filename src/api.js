@@ -1,4 +1,5 @@
 require('dotenv').config();
+
 const express = require("express");
 const app = express();
 const router = express.Router();
@@ -6,16 +7,20 @@ const serverless = require("serverless-http");
 const nodemailer = require('nodemailer');
 const bodyParser = require('body-parser');
 const fetch = require('node-fetch');
+const { uuid } = require('uuidv4');
+
 const stripe = require("stripe")(process.env.API_KEY);
 const RECAPTCHA_KEY = (process.env.RECAPTCHA_KEY);
 const EMAIL = (process.env.EMAIL);
 const PASSWORD = (process.env.PASSWORD);
 
-const { uuid } = require('uuidv4');
-
-app.use(bodyParser.urlencoded({ extended: true }))
-app.use('/.netlify/functions/api', router);
-app.use(bodyParser.json());
+let transporter = nodemailer.createTransport({
+    service: 'gmail',
+    auth: {
+        user: EMAIL,
+        pass: PASSWORD
+    }
+});
 
 app.use((req, res, next) => {
     const allowedOrigins = ['https://www.lacarnivores.com', 'https://www.lacarnivores.com/Checkout', 'https://www.lacarnivores.com/Contact'];
@@ -29,15 +34,9 @@ app.use((req, res, next) => {
     }
     return next();
 });
-
-
-let transporter = nodemailer.createTransport({
-    service: 'gmail',
-    auth: {
-        user: EMAIL,
-        pass: PASSWORD
-    }
-});
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json());
+app.use('/.netlify/functions/api', router);
 
 // Creates Customer => creates source => creates charge
 async function CreateCustomer(data, res) {
