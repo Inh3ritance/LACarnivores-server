@@ -23,19 +23,22 @@ let transporter = nodemailer.createTransport({
     }
 });
 
-app.use('/.netlify/functions/api', router);
-app.use((req, res, next) => {
-    const allowedOrigins = ['https://www.lacarnivores.com', 'https://www.lacarnivores.com/Checkout','https://www.lacarnivores.com/Contact'];
-    const origin = req.headers.origin;
-    if(allowedOrigins.indexOf(origin) > -1){
-         res.Header('Access-Control-Allow-Origin', '*');
-         res.header('Access-Control-Allow-Methods','POST, GET');
-		 res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-		 res.header('Access-Control-Allow-Headers', 'X-Requested-With, Content-Type');
-		 res.header('Access-Control-Allow-Credentials', true);
+const allowedOrigins = ['https://www.lacarnivores.com', 'https://www.lacarnivores.com/Checkout','https://www.lacarnivores.com/Contact'];
+
+const config = {
+    cors: {
+      origin: verifyOrigin,
     }
-    return next();
-});
+};
+
+function verifyOrigin(ctx){
+    if(!allowedOrigins.indexOf(ctx.headers.origin) != -1) 
+        return false;
+    return origin;
+};
+
+app.use('/.netlify/functions/api', router);
+app.use(cors(config.cors));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
