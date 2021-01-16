@@ -23,22 +23,19 @@ let transporter = nodemailer.createTransport({
     }
 });
 
-const allowedOrigins = ['https://www.lacarnivores.com', 'https://www.lacarnivores.com/Checkout','https://www.lacarnivores.com/Contact'];
-
-const config = {
-    cors: {
-      origin: verifyOrigin,
-    }
-};
-
-function verifyOrigin(ctx){
-    if(!allowedOrigins.indexOf(ctx.headers.origin) != -1) 
-        return false;
-    return origin;
-};
-
 app.use('/.netlify/functions/api', router);
-app.use(cors(config.cors));
+app.use((req, res, next) => {
+    const allowedOrigins = ['https://www.lacarnivores.com', 'https://www.lacarnivores.com/Checkout','https://www.lacarnivores.com/Contact'];
+    const origin = req.headers.origin;
+    console.log(origin);
+    if(allowedOrigins.indexOf(origin) > -1){
+         res.setHeader('Access-Control-Allow-Origin', origin);
+		 res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+		 res.header('Access-Control-Allow-Headers', 'X-Requested-With, Content-Type');
+		 res.header('Access-Control-Allow-Credentials', true);
+    }
+    return next();
+});
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
@@ -279,7 +276,6 @@ router.get("/prices", async (req, res) => {
     stripe.prices.list(
         { product: req.query.id },
         (err, price) => {
-            // asynchronously called
             console.log(price.data);
             res.send(price.data);
         }
