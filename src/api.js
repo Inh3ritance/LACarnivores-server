@@ -23,10 +23,10 @@ let transporter = nodemailer.createTransport({
 });
 
 app.use((req, res, next) => {
-    var allowedOrigins = ['https://www.lacarnivores.com'];
+    var allowedOrigins = ['https://www.lacarnivores.com', 'https://www.lacarnivores.com/Checkout','https://www.lacarnivores.com/Contact'];
     var origin = req.headers.origin;
     if(allowedOrigins.indexOf(origin) > -1){
-         res.setHeader('Access-Control-Allow-Origin', origin);
+         res.setHeader('Access-Control-Allow-Origin', '*');
 		 res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
 		 res.header('Access-Control-Allow-Headers', 'X-Requested-With, Content-Type');
 		 res.header('Access-Control-Allow-Credentials', true);

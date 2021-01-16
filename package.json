@@ -20,7 +20,6 @@
   "homepage": "https://github.com/Inh3ritance/LACarnivores-server#readme",
   "dependencies": {
     "body-parser": "^1.19.0",
-    "cors": "^2.8.5",
     "dotenv": "^8.2.0",
     "encoding": "^0.1.13",
     "express": "^4.17.1",
