@@ -1,6 +1,5 @@
 require('dotenv').config();
 
-const cors = require('cors');
 const express = require("express");
 const app = express();
 const router = express.Router();
@@ -23,11 +22,9 @@ let transporter = nodemailer.createTransport({
     }
 });
 
-app.use('/.netlify/functions/api', router);
 app.use((req, res, next) => {
-    const allowedOrigins = ['https://www.lacarnivores.com', 'https://www.lacarnivores.com/Checkout','https://www.lacarnivores.com/Contact'];
-    const origin = req.headers.origin;
-    console.log(origin);
+    var allowedOrigins = ['https://www.lacarnivores.com', 'https://www.lacarnivores.com/Checkout','https://www.lacarnivores.com/Contact'];
+    var origin = req.headers.origin;
     if(allowedOrigins.indexOf(origin) > -1){
          res.setHeader('Access-Control-Allow-Origin', origin);
 		 res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
@@ -36,6 +33,7 @@ app.use((req, res, next) => {
     }
     return next();
 });
+app.use('/.netlify/functions/api', router);
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
