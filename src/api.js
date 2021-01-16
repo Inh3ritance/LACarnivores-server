@@ -9,7 +9,7 @@ const bodyParser = require('body-parser');
 const fetch = require('node-fetch');
 const { uuid } = require('uuidv4');
 
-const stripe = require("stripe")(process.env.API_KEY);
+const stripe = require('stripe')(process.env.API_KEY);
 const RECAPTCHA_KEY = (process.env.RECAPTCHA_KEY);
 const EMAIL = (process.env.EMAIL);
 const PASSWORD = (process.env.PASSWORD);
@@ -23,7 +23,7 @@ let transporter = nodemailer.createTransport({
 });
 
 app.use((req, res, next) => {
-    var allowedOrigins = ['https://www.lacarnivores.com', 'https://www.lacarnivores.com/Checkout','https://www.lacarnivores.com/Contact'];
+    var allowedOrigins = ['https://www.lacarnivores.com'];
     var origin = req.headers.origin;
     if(allowedOrigins.indexOf(origin) > -1){
          res.setHeader('Access-Control-Allow-Origin', origin);
@@ -41,8 +41,8 @@ app.use(bodyParser.json());
 async function CreateCustomer(data, res) {
     let existingCustomers = await stripe.customers.list({ email: data.personal_info.email });
     if (existingCustomers.data.length) {
-        console.log("Not creating new customer");
-        /*Use existing customerUID and pass in rest of data to create charge*/
+        console.log('Not creating new customer');
+        /* Use existing customerUID and pass in rest of data to create charge */
         console.log(existingCustomers.data[0].id);
         updateSource(data, existingCustomers.data[0].id, res);
     } else {
@@ -57,15 +57,13 @@ async function CreateCustomer(data, res) {
             console.log(e);
         });
 
-    } // end else
-} // end CreateCustomer
+    }
+}
 
 async function createSource(data, customerID, res) {
     await stripe.customers.createSource(
         customerID,
-        {
-            source: data.card.token.id
-        },
+        { source: data.card.token.id },
         (err, card) => {
             updateCard(data, card.customer, card.id);
             createOrder(data, customerID, res);
@@ -76,12 +74,11 @@ async function createSource(data, customerID, res) {
 
 async function updateCard(data, customerID, cardID) {
     await stripe.customers.updateSource(
-        customerID,
-        cardID,
+        customerID, cardID,
         {
             name: data.personal_info.name,
             address_city: data.billing_address.city,
-            address_country: "United States",
+            address_country: 'United States',
             address_line1: data.billing_address.line1,
             address_state: data.billing_address.state,
 
@@ -97,8 +94,6 @@ async function updateSource(data, customerID, res) {
         customerID,
         { source: data.card.token.id },
         (err, card) => {
-            //console.log("UPDATE SOURCE CARD: Cust ID", card.id);
-            //console.log("UPDATE SOURCE CARD: Card ID", card.default_source);
             updateCard(data, card.id, card.default_source);
             createOrder(data, customerID, res);
         }).catch(err => {
@@ -125,7 +120,7 @@ async function updateProductQuantity(itemID, cartQuantity) {
     await stripe.products.retrieve(
         itemID, (err, product) => {
             if (parseInt(product.metadata.quantity) - cartQuantity < 0) {
-                console.log("No more in stock", parseInt(product.metadata.quantity) - cartQuantity);
+                console.log('No more in stock', parseInt(product.metadata.quantity) - cartQuantity);
             } else {
                 stripe.products.update(
                     itemID,
@@ -192,7 +187,7 @@ async function createOrder(data, customerID, res) {
         });
     } else {
         res.sendStatus(404);
-        console.log("Too BAD!!!");
+        console.log('Out of stock');
     }
 
 }
@@ -210,7 +205,7 @@ function updateOrder(chargeID, cartInfo) {
     let reciept = '';
     for (var key in cartInfo) {
         var item = cartInfo[key];
-        reciept += item.name + " " + item.quantity + "x $" + item.price + "\n";
+        reciept += item.name + ' ' + item.quantity + 'x $' + item.price + '\n';
     }
 
     stripe.charges.update(
@@ -223,7 +218,7 @@ function updateOrder(chargeID, cartInfo) {
 }
 
 // Get all products
-router.get("/products", async (request, response) => {
+router.get('/products', async (request, response) => {
     stripe.products.list(
         { active: true },
         (err, list) => {
@@ -232,7 +227,7 @@ router.get("/products", async (request, response) => {
     )
 });
 
-router.get("/skus", async (request, response) => {
+router.get('/skus', async (request, response) => {
     stripe.skus.list(
         { active: true },
         (err, skus) => {
@@ -242,7 +237,7 @@ router.get("/skus", async (request, response) => {
     );
 });
 
-router.post("/charge", async (req, res) => {
+router.post('/charge', async (req, res) => {
     let data = {
         personal_info: {
             name: req.body.name,
@@ -270,7 +265,7 @@ router.post("/charge", async (req, res) => {
     CreateCustomer(data,res);
 });
 
-router.get("/prices", async (req, res) => {
+router.get('/prices', async (req, res) => {
     stripe.prices.list(
         { product: req.query.id },
         (err, price) => {
@@ -280,7 +275,7 @@ router.get("/prices", async (req, res) => {
     );
 });
 
-router.post("/sendEmail", async (req, res) => {
+router.post('/sendEmail', async (req, res) => {
     let mailOptions = {
         from: req.body.email,
         to: EMAIL,
@@ -291,11 +286,11 @@ router.post("/sendEmail", async (req, res) => {
         .then((response) => {
             console.log('Email Sent');
         }).catch((err) => {
-            console.log("Error: ", err)
+            console.log('Error: ', err)
     });
 });
 
-router.post("/verify", async (req, res) => {
+router.post('/verify', async (req, res) => {
     var VERIFY_URL = `https://www.google.com/recaptcha/api/siteverify?secret=${RECAPTCHA_KEY}&response=${req.body['g-recaptcha-response']}`;
     return fetch(VERIFY_URL, { method: 'POST' })
     .then(res => res.json())
