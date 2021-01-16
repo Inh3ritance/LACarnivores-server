@@ -298,7 +298,8 @@ router.post("/sendEmail", async (req, res) => {
 router.post("/verify", async (req, res) => {
     var VERIFY_URL = `https://www.google.com/recaptcha/api/siteverify?secret=${RECAPTCHA_KEY}&response=${req.body['g-recaptcha-response']}`;
     return fetch(VERIFY_URL, { method: 'POST' })
-    .then(result => res.send(result.json()))
+    .then(res => res.json())
+    .then(json => res.send(json))
     .catch(err => console.log(err));
 });
 
