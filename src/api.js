@@ -7,7 +7,7 @@ const serverless = require("serverless-http");
 const nodemailer = require('nodemailer');
 const bodyParser = require('body-parser');
 const fetch = require('node-fetch');
-const cors = require('cors')({ origin: true });
+const cors = require('cors')({ origin: 'https://www.lacarnivores.com' });
 const { uuid } = require('uuidv4');
 
 const stripe = require('stripe')(process.env.API_KEY);
@@ -25,6 +25,7 @@ let transporter = nodemailer.createTransport({
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
+app.use(cors);
 app.use((req, res, next) => {
     res.setHeader('Access-Control-Allow-Origin', 'https://www.lacarnivores.com');
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization, Origin, X-Requested-With');
