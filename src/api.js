@@ -34,6 +34,17 @@ app.use((req, res, next) => {
     return next();
 });
 app.use('/.netlify/functions/api', router);
+router.use((req, res, next) => {
+    var allowedOrigins = ['https://www.lacarnivores.com', 'https://www.lacarnivores.com/Checkout','https://www.lacarnivores.com/Contact'];
+    var origin = req.headers.origin;
+    if(allowedOrigins.indexOf(origin) > -1){
+         res.setHeader('Access-Control-Allow-Origin', origin);
+         res.setHeader("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+         res.setHeader('Access-Control-Allow-Methods', 'POST, GET');
+		 res.setHeader('Access-Control-Allow-Credentials', true);
+    }
+    return next();
+});
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
