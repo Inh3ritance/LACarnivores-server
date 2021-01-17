@@ -7,6 +7,7 @@ const serverless = require("serverless-http");
 const nodemailer = require('nodemailer');
 const bodyParser = require('body-parser');
 const fetch = require('node-fetch');
+const cors = require('cors')({ origin: true });
 const { uuid } = require('uuidv4');
 
 const stripe = require('stripe')(process.env.API_KEY);
