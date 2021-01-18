@@ -7,7 +7,7 @@ const serverless = require("serverless-http");
 const nodemailer = require('nodemailer');
 const bodyParser = require('body-parser');
 const fetch = require('node-fetch');
-const cors = require('cors')({ origin: 'https://www.lacarnivores.com' });
+const cors = require('cors');
 const { uuid } = require('uuidv4');
 
 const stripe = require('stripe')(process.env.API_KEY);
@@ -23,16 +23,9 @@ let transporter = nodemailer.createTransport({
     }
 });
 
+app.use(cors());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
-app.use(cors);
-app.use((req, res, next) => {
-    res.setHeader('Access-Control-Allow-Origin', 'https://www.lacarnivores.com');
-    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization, Origin, X-Requested-With');
-    res.setHeader('Access-Control-Allow-Methods', 'POST, GET, PUT, DELETE');
-	res.setHeader('Access-Control-Allow-Credentials', true);
-    next();
-});
 app.use('/.netlify/functions/api', router);
 
 // Creates Customer => creates source => creates charge
@@ -281,6 +274,7 @@ router.post('/sendEmail', async (req, res) => {
     };
     transporter.sendMail(mailOptions)
         .then((response) => {
+            res.send(response);
             console.log('Email Sent');
         }).catch((err) => {
             console.log('Error: ', err)
