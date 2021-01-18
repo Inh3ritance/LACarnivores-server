@@ -11,7 +11,7 @@ const { uuid } = require('uuidv4');
 const cors = require('cors');
 
 const config = ({
-    origin: 'https://www.lacarnivores.com/Contact', 
+    origin: 'https://www.lacarnivores.com', 
     credentials: true,
     methods: ['POST','GET','OPTIONS']
 });
