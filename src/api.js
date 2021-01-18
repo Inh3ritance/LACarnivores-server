@@ -7,8 +7,14 @@ const serverless = require("serverless-http");
 const nodemailer = require('nodemailer');
 const bodyParser = require('body-parser');
 const fetch = require('node-fetch');
-const cors = require('cors')({origin: 'https://www.lacarnivores.com', credentials: true});
 const { uuid } = require('uuidv4');
+const cors = require('cors');
+
+const config = ({
+    origin: 'https://www.lacarnivores.com', 
+    credentials: true,
+    methods: ['POST','GET','OPTIONS']
+});
 
 const stripe = require('stripe')(process.env.API_KEY);
 const RECAPTCHA_KEY = (process.env.RECAPTCHA_KEY);
@@ -25,8 +31,8 @@ let transporter = nodemailer.createTransport({
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
-app.use(cors);
-app.options('*', cors);
+app.options('*', cors(config));
+app.use(cors(config));
 app.use('/.netlify/functions/api', router);
 
 // Creates Customer => creates source => creates charge
@@ -266,7 +272,7 @@ router.get('/prices', async (req, res) => {
     );
 });
 
-router.post('/sendEmail', cors, async (req, res) => {
+router.post('/sendEmail', cors(config), async (req, res) => {
     let mailOptions = {
         from: req.body.email,
         to: EMAIL,
@@ -282,7 +288,7 @@ router.post('/sendEmail', cors, async (req, res) => {
     });
 });
 
-router.post('/verify', cors, async (req, res) => {
+router.post('/verify', cors(config), async (req, res) => {
     var VERIFY_URL = `https://www.google.com/recaptcha/api/siteverify?secret=${RECAPTCHA_KEY}&response=${req.body['g-recaptcha-response']}`;
     return fetch(VERIFY_URL, { method: 'POST' })
     .then(res => res.json())
