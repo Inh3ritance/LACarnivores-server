@@ -7,8 +7,7 @@ const serverless = require("serverless-http");
 const nodemailer = require('nodemailer');
 const bodyParser = require('body-parser');
 const fetch = require('node-fetch');
-const cors = require('cors');
-const corsOptions = ({origin: 'https://www.lacarnivores.com', credentials: true});
+const cors = require('cors')({origin: 'https://www.lacarnivores.com', credentials: true});
 const { uuid } = require('uuidv4');
 
 const stripe = require('stripe')(process.env.API_KEY);
@@ -26,6 +25,8 @@ let transporter = nodemailer.createTransport({
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
+app.use(cors);
+app.options('*', cors);
 app.use('/.netlify/functions/api', router);
 
 // Creates Customer => creates source => creates charge
@@ -208,7 +209,7 @@ function updateOrder(chargeID, cartInfo) {
 }
 
 // Get all products
-router.get('/products', cors(corsOptions), async (request, response) => {
+router.get('/products', async (request, response) => {
     stripe.products.list(
         { active: true },
         (err, list) => {
@@ -217,7 +218,7 @@ router.get('/products', cors(corsOptions), async (request, response) => {
     )
 });
 
-router.get('/skus', cors(corsOptions), async (request, response) => {
+router.get('/skus', async (request, response) => {
     stripe.skus.list(
         { active: true },
         (err, skus) => {
@@ -227,7 +228,7 @@ router.get('/skus', cors(corsOptions), async (request, response) => {
     );
 });
 
-router.post('/charge', cors(corsOptions), async (req, res) => {
+router.post('/charge', async (req, res) => {
     let data = {
         personal_info: {
             name: req.body.name,
@@ -255,7 +256,7 @@ router.post('/charge', cors(corsOptions), async (req, res) => {
     CreateCustomer(data,res);
 });
 
-router.get('/prices', cors(corsOptions), async (req, res) => {
+router.get('/prices', async (req, res) => {
     stripe.prices.list(
         { product: req.query.id },
         (err, price) => {
@@ -265,7 +266,7 @@ router.get('/prices', cors(corsOptions), async (req, res) => {
     );
 });
 
-router.post('/sendEmail', cors(corsOptions), async (req, res) => {
+router.post('/sendEmail', async (req, res) => {
     let mailOptions = {
         from: req.body.email,
         to: EMAIL,
@@ -281,7 +282,7 @@ router.post('/sendEmail', cors(corsOptions), async (req, res) => {
     });
 });
 
-router.post('/verify', cors(corsOptions), async (req, res) => {
+router.post('/verify', async (req, res) => {
     var VERIFY_URL = `https://www.google.com/recaptcha/api/siteverify?secret=${RECAPTCHA_KEY}&response=${req.body['g-recaptcha-response']}`;
     return fetch(VERIFY_URL, { method: 'POST' })
     .then(res => res.json())
