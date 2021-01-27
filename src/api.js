@@ -270,14 +270,14 @@ router.get('/prices', async (req, res) => {
     );
 });
 
-router.post('/sendEmail', cors(config), (req, res) => {
+router.post('/sendEmail', (req, res) => {
     let mailOptions = {
         from: req.body.email,
         to: EMAIL,
         subject: req.body.subject,
         text: req.body.text
     };
-    transporter.sendMail(mailOptions, cors(config), error => {
+    transporter.sendMail(mailOptions, error => {
         if(error){
           const response = {
             statusCode: 500,
@@ -306,6 +306,7 @@ router.post('/verify', (req, res) => {
             'Access-Control-Allow-Methods': 'POST, OPTION',
         }
     })
+    .then(res => res.json)
     .then(json => res.send(json))
     .catch(err => console.log(err));
 });
