@@ -31,7 +31,6 @@ let transporter = nodemailer.createTransport({
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
-app.options('*', cors(config));
 app.use(cors(config));
 app.use('/.netlify/functions/api', router);
 
@@ -54,7 +53,6 @@ async function CreateCustomer(data, res) {
         }).catch(e => {
             console.log(e);
         });
-
     }
 }
 
@@ -272,25 +270,43 @@ router.get('/prices', async (req, res) => {
     );
 });
 
-router.post('/sendEmail', cors(config), async (req, res) => {
+router.post('/sendEmail', (req, res) => {
     let mailOptions = {
         from: req.body.email,
         to: EMAIL,
         subject: req.body.subject,
         text: req.body.text
     };
-    transporter.sendMail(mailOptions)
-        .then((response) => {
-            res.send(response);
-            console.log('Email Sent');
-        }).catch((err) => {
-            console.log('Error: ', err)
-    });
+    transporter.sendMail(mailOptions, (error, info) => {
+        if(error){
+          const response = {
+            statusCode: 500,
+            body: JSON.stringify({
+              error: error.message,
+            }),
+          };
+          res.send(response);
+        }
+        const response = {
+          statusCode: 200,
+          body: JSON.stringify({
+            message: `Email processed succesfully!`
+          }),
+        };
+        res.send(response);
+      });
 });
 
-router.post('/verify', cors(config), async (req, res) => {
+router.post('/verify', (req, res) => {
     var VERIFY_URL = `https://www.google.com/recaptcha/api/siteverify?secret=${RECAPTCHA_KEY}&response=${req.body['g-recaptcha-response']}`;
-    return fetch(VERIFY_URL, { method: 'POST' })
+    return fetch(VERIFY_URL, { 
+        method: 'POST',
+        headers: { 
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Headers': 'Content-Type',
+            'Access-Control-Allow-Methods': 'GET, POST, OPTION',
+        }
+    })
     .then(res => res.json())
     .then(json => res.send(json))
     .catch(err => console.log(err));
