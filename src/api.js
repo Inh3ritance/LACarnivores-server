@@ -21,14 +21,6 @@ const RECAPTCHA_KEY = (process.env.RECAPTCHA_KEY);
 const EMAIL = (process.env.EMAIL);
 const PASSWORD = (process.env.PASSWORD);
 
-let transporter = nodemailer.createTransport({
-    service: 'gmail',
-    auth: {
-        user: EMAIL,
-        pass: PASSWORD
-    }
-});
-
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(cors(config));
@@ -270,7 +262,16 @@ router.get('/prices', async (req, res) => {
     );
 });
 
-router.post('/sendEmail', (req, res) => {
+router.options('/sendEmail', cors(config));
+router.post('/sendEmail', cors(config), (req, res) => {
+    let transporter = nodemailer.createTransport({
+        service: 'gmail',
+        port: 465,
+        auth: {
+            user: EMAIL,
+            pass: PASSWORD
+        }
+    });
     let mailOptions = {
         from: req.body.email,
         to: EMAIL,
@@ -295,10 +296,11 @@ router.post('/sendEmail', (req, res) => {
         };
         res.send(response);
       });
+      transporter.close();
 });
 
 router.post('/verify', (req, res) => {
-    var VERIFY_URL = `https://www.google.com/recaptcha/api/siteverify?secret=${RECAPTCHA_KEY}&response=${req.body['g-recaptcha-response']}`;
+    var VERIFY_URL = `https://www.google.com/recaptcha/api/siteverify?secret=${RECAPTCHA_KEY}&response=${req.body.response}`;
     return fetch(VERIFY_URL, { 
         method: 'POST',
         headers: { 
