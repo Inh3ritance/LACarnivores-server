@@ -270,21 +270,17 @@ router.get('/prices', async (req, res) => {
     );
 });
 
-router.post('/sendEmail', (req, res) => {
+router.post('/sendEmail', cors(config), (req, res) => {
     let mailOptions = {
         from: req.body.email,
         to: EMAIL,
         subject: req.body.subject,
         text: req.body.text
     };
-    transporter.sendMail(mailOptions, error => {
+    transporter.sendMail(mailOptions, cors(config), error => {
         if(error){
           const response = {
             statusCode: 500,
-            headers: { 
-                'Access-Control-Allow-Origin': '*',
-                'Access-Control-Allow-Methods': 'POST, OPTION',
-            },
             body: JSON.stringify({
               error: error.message,
             }),
@@ -293,10 +289,6 @@ router.post('/sendEmail', (req, res) => {
         }
         const response = {
           statusCode: 200,
-          headers: { 
-            'Access-Control-Allow-Origin': '*',
-            'Access-Control-Allow-Methods': 'POST, OPTION',
-          },
           body: JSON.stringify({
             message: `Email processed succesfully!`
           }),
@@ -314,7 +306,6 @@ router.post('/verify', (req, res) => {
             'Access-Control-Allow-Methods': 'POST, OPTION',
         }
     })
-    .then(res => {res.json(), console.log(res.json())})
     .then(json => res.send(json))
     .catch(err => console.log(err));
 });
