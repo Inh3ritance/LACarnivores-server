@@ -262,7 +262,7 @@ router.get('/prices', async (req, res) => {
     );
 });
 
-router.options('/sendEmail', cors(config));
+app.options('/sendEmail', cors(config));
 router.post('/sendEmail', cors(config), (req, res) => {
     let transporter = nodemailer.createTransport({
         service: 'gmail',
