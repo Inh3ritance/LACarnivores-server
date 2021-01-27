@@ -277,7 +277,7 @@ router.post('/sendEmail', (req, res) => {
         subject: req.body.subject,
         text: req.body.text
     };
-    transporter.sendMail(mailOptions, (error, info) => {
+    transporter.sendMail(mailOptions, cors(config), error => {
         if(error){
           const response = {
             statusCode: 500,
@@ -307,7 +307,7 @@ router.post('/verify', (req, res) => {
             'Access-Control-Allow-Methods': 'GET, POST, OPTION',
         }
     })
-    .then(res => res.json())
+    .then(res => {res.json(), console.log(res.json())})
     .then(json => res.send(json))
     .catch(err => console.log(err));
 });
