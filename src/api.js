@@ -4,7 +4,6 @@ const express = require("express");
 const app = express();
 const router = express.Router();
 const serverless = require("serverless-http");
-const nodemailer = require('nodemailer');
 const bodyParser = require('body-parser');
 const fetch = require('node-fetch');
 const { uuid } = require('uuidv4');
@@ -18,8 +17,6 @@ const config = ({
 
 const stripe = require('stripe')(process.env.API_KEY);
 const RECAPTCHA_KEY = (process.env.RECAPTCHA_KEY);
-const EMAIL = (process.env.EMAIL);
-const PASSWORD = (process.env.PASSWORD);
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
@@ -260,43 +257,6 @@ router.get('/prices', async (req, res) => {
             res.send(price.data);
         }
     );
-});
-
-app.options('/sendEmail', cors(config));
-router.post('/sendEmail', cors(config), (req, res) => {
-    let transporter = nodemailer.createTransport({
-        service: 'gmail',
-        port: 465,
-        auth: {
-            user: EMAIL,
-            pass: PASSWORD
-        }
-    });
-    let mailOptions = {
-        from: req.body.email,
-        to: EMAIL,
-        subject: req.body.subject,
-        text: req.body.text
-    };
-    transporter.sendMail(mailOptions, error => {
-        if(error){
-          const response = {
-            statusCode: 500,
-            body: JSON.stringify({
-              error: error.message,
-            }),
-          };
-          res.send(response);
-        }
-        const response = {
-          statusCode: 200,
-          body: JSON.stringify({
-            message: `Email processed succesfully!`
-          }),
-        };
-        res.send(response);
-      });
-      transporter.close();
 });
 
 router.post('/verify', (req, res) => {
