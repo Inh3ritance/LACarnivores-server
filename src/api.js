@@ -12,7 +12,8 @@ const cors = require('cors');
 const config = ({
     origin: 'https://www.lacarnivores.com', 
     credentials: true,
-    methods: ['POST','GET','OPTIONS']
+    methods: ['POST','GET','OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
 });
 
 const stripe = require('stripe')(process.env.API_KEY);
@@ -259,6 +260,7 @@ router.get('/prices', async (req, res) => {
     );
 });
 
+router.options('/verify', cors(config));
 router.post('/verify', async (req, res) => {
     var VERIFY_URL = `https://www.google.com/recaptcha/api/siteverify?secret=${RECAPTCHA_KEY}&response=${req.body.response}`;
     return await fetch(VERIFY_URL, { 
@@ -267,7 +269,6 @@ router.post('/verify', async (req, res) => {
             'Access-Control-Allow-Origin': 'https://www.lacarnivores.com',
             'Access-Control-Allow-Methods': 'POST',
             'Access-Control-Allow-Headers': 'Content-Type, Authorization',
-            'Content-Type': 'application/x-www-form-urlencoded; charset=utf-8, application/json'
         }
     })
     .then(res => res.json())
