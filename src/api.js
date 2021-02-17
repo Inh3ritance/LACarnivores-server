@@ -10,7 +10,7 @@ const { uuid } = require('uuidv4');
 const cors = require('cors');
 
 const config = ({
-    origin: 'https://www.lacarnivores.com', 
+    origin: ['https://www.lacarnivores.com','https://lacarnivoresapi.netlify.app/'], 
     credentials: true,
     methods: ['POST','GET','OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization'],
