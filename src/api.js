@@ -264,7 +264,7 @@ router.post('/verify', async (req, res) => {
     return await fetch(VERIFY_URL, { 
         method: 'POST',
         headers: { 
-            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Origin': 'https://lacarnivoresapi.netlify.app',
             'Accept': 'application/json',
             'Content-Type': 'application/x-www-form-urlencoded; charset=utf-8',
             'Access-Control-Allow-Methods': 'POST, OPTION',
