@@ -265,6 +265,8 @@ router.post('/verify', async (req, res) => {
         method: 'POST',
         headers: { 
             'Access-Control-Allow-Origin': '*',
+            'Accept': 'application/json',
+            'Content-Type': 'application/x-www-form-urlencoded; charset=utf-8',
             'Access-Control-Allow-Methods': 'POST, OPTION',
         }
     })
