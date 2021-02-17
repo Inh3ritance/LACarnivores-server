@@ -267,7 +267,7 @@ router.post('/verify', async (req, res) => {
             'Access-Control-Allow-Origin': 'https://www.lacarnivores.com',
             'Access-Control-Allow-Methods': 'POST',
             'Access-Control-Allow-Headers': 'Content-Type, Authorization',
-            'Content-Type': 'application/x-www-form-urlencoded; charset=utf-8'
+            'Content-Type': 'application/x-www-form-urlencoded; charset=utf-8, application/json'
         }
     })
     .then(res => res.json())
