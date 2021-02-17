@@ -265,11 +265,6 @@ router.post('/verify', cors(config), async (req, res) => {
     var VERIFY_URL = `https://www.google.com/recaptcha/api/siteverify?secret=${RECAPTCHA_KEY}&response=${req.body.response}`;
     return await fetch(VERIFY_URL, { 
         method: 'POST',
-        headers: { 
-            'Access-Control-Allow-Origin': 'https://www.lacarnivores.com',
-            'Access-Control-Allow-Methods': 'POST',
-            'Access-Control-Allow-Headers': 'Content-Type, Authorization',
-        }
     })
     .then(res => res.json())
     .then(json => res.send(json))
