@@ -26,9 +26,8 @@
     "express": "^4.17.1",
     "netlify-lambda": "^1.6.3",
     "node-fetch": "^2.6.1",
-    "nodemon": "^2.0.6",
+    "nodemon": "^2.0.7",
     "serverless-http": "^2.6.0",
-    "stripe": "^8.129.0",
-    "uuidv4": "^6.2.6"
+    "stripe": "^8.129.0"
   }
 }

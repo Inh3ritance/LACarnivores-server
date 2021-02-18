@@ -1,6 +1,5 @@
 // PRODUCT MANAGEMENT 
 
-
 async function createSKU() {
     await stripe.skus.update(
         'sku_HWiSMoOAzZ7dkH',
