@@ -6,6 +6,7 @@ const router = express.Router();
 const serverless = require("serverless-http");
 const bodyParser = require('body-parser');
 const fetch = require('node-fetch');
+const HttpsProxyAgent = require('https-proxy-agent');
 const cors = require('cors');
 
 const config = ({
@@ -272,8 +273,10 @@ router.post('/charge', async (req, res) => {
 
 router.post('/verify', async (req, res) => {
     var VERIFY_URL = `https://www.google.com/recaptcha/api/siteverify?secret=${RECAPTCHA_KEY}&response=${req.body.response}`;
+    const proxyAgent = new HttpsProxyAgent('https://lacarnivoresapi.netlify.app');
     await fetch(VERIFY_URL, { 
         method: 'POST',
+        agent: proxyAgent,
     }).then(res =>
         res.json()
     ).then(json => 
