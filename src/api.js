@@ -6,11 +6,11 @@ const router = express.Router();
 const serverless = require("serverless-http");
 const bodyParser = require('body-parser');
 const fetch = require('node-fetch');
-const HttpsProxyAgent = require('https-proxy-agent');
 const cors = require('cors');
+const nodemailer = require('nodemailer'); 
 
 const config = ({
-    origin: ['https://www.lacarnivores.com','https://lacarnivoresapi.netlify.app/'], 
+    origin: ['https://www.lacarnivores.com'], 
     credentials: true,
     methods: ['POST','GET','OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization'],
@@ -18,6 +18,8 @@ const config = ({
 
 const stripe = require('stripe')(process.env.API_KEY);
 const RECAPTCHA_KEY = (process.env.RECAPTCHA_KEY);
+const EMAIL = (process.env.EMAIL);
+const PASSWORD = (process.env.PASSWORD);
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
@@ -273,7 +275,6 @@ router.post('/charge', async (req, res) => {
 
 router.post('/verify', async (req, res) => {
     var VERIFY_URL = `https://www.google.com/recaptcha/api/siteverify?secret=${RECAPTCHA_KEY}&response=${req.body.response}`;
-    const proxyAgent = new HttpsProxyAgent('https://lacarnivoresapi.netlify.app');
     await fetch(VERIFY_URL, { 
         method: 'POST',
         agent: proxyAgent,
@@ -284,6 +285,31 @@ router.post('/verify', async (req, res) => {
     ).catch(err => 
         console.log(err)
     );
+});
+
+router.post('/sendEmail', (req, res) => {
+    console.log(req.body);
+    const transporter = nodemailer.createTransport({
+        service: 'gmail',
+        port: 587,
+        auth: {
+          user: EMAIL,
+          pass: PASSWORD,
+        }
+    });
+    var mailOptions = {
+        from: req.body.email,
+        to: EMAIL,
+        subject: req.body.subject,
+        text: req.body.text,
+    };
+    transporter.sendMail(mailOptions, (error, info) => {
+        if (error) {
+          res.send(false);
+        } else {
+          res.send(true);
+        }
+      });
 });
 
 // Uncomment code below in order to run code locally using ` node api.js `
