@@ -29,10 +29,10 @@ app.use('/.netlify/functions/api', router);
 // Creates Customer => creates source => creates charge
 async function CreateCustomer(data, res) {
     let existingCustomers = await stripe.customers.list({ 
-            email: data.personal_info.email
-        }).catch(err =>
-            console.log(err)
-        );
+        email: data.personal_info.email
+    }).catch(err =>
+        console.log(err)
+    );
 
     if (existingCustomers.data.length) { // Use existing customerUID and pass in rest of data to create charge
         console.log(existingCustomers.data[0].id);
@@ -228,6 +228,31 @@ function updateOrder(chargeID, cartInfo) {
     );
 }
 
+function verifyData(data){
+    console.log(typeof(data.active));
+    console.log(data.active);
+    try {
+        var temp = [];
+        data.images.forEach( element => {
+            if(element.length == 0)
+                temp.push('https://files.stripe.com/links/fl_test_wYR38Z6vDNAmp37OBQmOa1tq'); // provide unavailable image
+            else
+                temp.push(element);
+        });
+        return {
+            name: data.name.length == 0 ? "PlaceHolder" : data.name,
+            images: temp,
+            description: data.description.length == 0 ? "PlaceHolder" : data.description,
+            active: data.active,
+            metadata: {
+                type: data.type.length == 0 ? "PlaceHolder" : data.type,
+            }
+        };
+    } catch(err) {
+        console.log(err);
+    }
+}
+
 // Get all products
 router.get('/products', async (req, res) => {
     stripe.products.list(
@@ -235,6 +260,16 @@ router.get('/products', async (req, res) => {
             active: true 
         },
     ).then(list =>
+        res.send(list)
+    ).catch(err => 
+        console.log(err)
+    );
+});
+
+// Get all products
+router.get('/allProducts', async (req, res) => {
+    stripe.products.list({
+    }).then(list =>
         res.send(list)
     ).catch(err => 
         console.log(err)
@@ -310,6 +345,59 @@ router.post('/sendEmail', (req, res) => {
           res.send(true);
         }
       });
+});
+
+router.get('/getMaster', (req, res) => {
+    console.log(req.Authorization);
+    res.send(req);
+    res.send({Approved: true});
+});
+
+router.post('/updateProduct', async (req, res) => {
+    var temp = [];
+    req.body.images.forEach( element => {
+        if(element.length == 0)
+            temp.push('https://files.stripe.com/links/fl_test_wYR38Z6vDNAmp37OBQmOa1tq'); // provide unavailable image
+        else
+            temp.push(element);
+    });
+    await stripe.products.update(
+        req.body.id,
+        {
+            name: req.body.name,
+            description: req.body.description,
+            images: temp,
+            metadata: {
+                type: req.body.type,
+                price: 0,
+                quantity: 0,
+            }
+        }
+    ).catch(err => {
+        console.log(err);
+        res.send(err);
+    });
+    res.send('success');
+});
+
+router.post('/createProduct', async (req, res) => {
+    const data = verifyData(req.body);
+    await stripe.products.create(
+        data,
+    ).catch(err => {
+        console.log(err);
+        res.send(err);
+    });
+    res.send('success');
+});
+
+router.post('/deleteProduct', async (req, res) => {
+    await stripe.products.del(req.body.id)
+    .catch(err => {
+        console.log(err);
+        res.send(err);
+    });
+    res.send('success');
 });
 
 // Uncomment code below in order to run code locally using ` node api.js `
