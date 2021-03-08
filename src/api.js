@@ -363,7 +363,7 @@ function verifyToken(bear) {
 
 // TODO: make this work without relying on netlify-lamda
 router.post('/getMaster', (req, res) => {
-    const token = verifyToken(req.headers['Authorization'], {complete: true});
+    const token = verifyToken(req.headers.authorization, {complete: true});
     res.send({Approved: token});
     const decode = jwt.decode(token);
     const payload = decode.payload;
