@@ -361,6 +361,7 @@ router.post('/sendEmail', (req, res) => {
     });
 });
 
+// TODO: make this work without relying on netlify-lamda
 router.get('/getMaster', verifyToken, (req, res) => {
     console.log(req.Authorization);
     res.send(req);
