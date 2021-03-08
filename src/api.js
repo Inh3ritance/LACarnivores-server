@@ -324,7 +324,6 @@ router.post('/verify', async (req, res) => {
     var VERIFY_URL = `https://www.google.com/recaptcha/api/siteverify?secret=${RECAPTCHA_KEY}&response=${req.body.response}`;
     await fetch(VERIFY_URL, { 
         method: 'POST',
-        agent: proxyAgent,
     }).then(res =>
         res.json()
     ).then(json => 
