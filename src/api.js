@@ -363,14 +363,7 @@ function verifyToken(bear) {
 
 // TODO: make this work without relying on netlify-lamda
 router.get('/getMaster', (req, res) => {
-    const token = verifyToken(req.headers['Authorization'], {complete: true});
-    res.send(token);
-    const decode = jwt.decode(token);
-    const payload = decode.payload;
-    if(payload.app_metadata.roles[0] === 'admin') {
-        res.send({Approved: true});
-    }
-    res.send({Approved: false});
+    res.send({Approved: req.headers['Authorization']});
 });
 
 router.post('/updateProduct', async (req, res) => {
