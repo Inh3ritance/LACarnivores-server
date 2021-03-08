@@ -362,7 +362,7 @@ function verifyToken(bear) {
 }
 
 // TODO: make this work without relying on netlify-lamda
-router.get('/getMaster', (req, res) => {
+router.post('/getMaster', (req, res) => {
     res.send({Approved: req.headers['Authorization']});
 });
 
