@@ -10,7 +10,7 @@ const cors = require('cors');
 const nodemailer = require('nodemailer'); 
 
 const config = ({
-    origin: ['https://www.lacarnivores.com'], 
+    origin: ['https://www.lacarnivores.com','http://localhost:3000'],
     credentials: true,
     methods: ['POST','GET','OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization'],
@@ -253,8 +253,20 @@ function verifyData(data){
     }
 }
 
+function verifyToken(req, res, next) {
+    const bearerHeader = req.headers['Authorization'];
+    if (bearerHeader) {
+      const bearer = bearerHeader.split(' ');
+      const bearerToken = bearer[1];
+      req.token = bearerToken;
+      next();
+    } else {
+      res.sendStatus(403);
+    }
+  }
+
 // Get all products
-router.get('/products', async (req, res) => {
+router.get('/products', async (_, res) => {
     stripe.products.list(
         { 
             active: true 
@@ -267,7 +279,7 @@ router.get('/products', async (req, res) => {
 });
 
 // Get all products
-router.get('/allProducts', async (req, res) => {
+router.get('/allProducts', async (_, res) => {
     stripe.products.list({
     }).then(list =>
         res.send(list)
@@ -323,10 +335,11 @@ router.post('/verify', async (req, res) => {
 });
 
 router.post('/sendEmail', (req, res) => {
-    console.log(req.body);
     const transporter = nodemailer.createTransport({
+        host: 'smtp.gmail.com',
         service: 'gmail',
-        port: 587,
+        port: 465,
+        secure: true,
         auth: {
           user: EMAIL,
           pass: PASSWORD,
@@ -335,19 +348,20 @@ router.post('/sendEmail', (req, res) => {
     var mailOptions = {
         from: req.body.email,
         to: EMAIL,
-        subject: req.body.subject,
+        subject: req.body.subject + ' ' + new Date().toLocaleString(),
         text: req.body.text,
     };
-    transporter.sendMail(mailOptions, (error, info) => {
-        if (error) {
-          res.send(false);
-        } else {
-          res.send(true);
-        }
-      });
+    transporter.sendMail(mailOptions)
+    .then((response) => {
+        console.log(response);
+        res.send(true);
+    }).catch((err) => {
+        console.log(err);
+        res.send(false);
+    });
 });
 
-router.get('/getMaster', (req, res) => {
+router.get('/getMaster', verifyToken, (req, res) => {
     console.log(req.Authorization);
     res.send(req);
     res.send({Approved: true});
@@ -356,7 +370,7 @@ router.get('/getMaster', (req, res) => {
 router.post('/updateProduct', async (req, res) => {
     var temp = [];
     req.body.images.forEach( element => {
-        if(element.length == 0)
+        if(element.length === 0)
             temp.push('https://files.stripe.com/links/fl_test_wYR38Z6vDNAmp37OBQmOa1tq'); // provide unavailable image
         else
             temp.push(element);
