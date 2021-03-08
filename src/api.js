@@ -10,7 +10,7 @@ const cors = require('cors');
 const nodemailer = require('nodemailer'); 
 
 const config = ({
-    origin: ['https://www.lacarnivores.com','http://localhost:3000'],
+    origin: ['https://www.lacarnivores.com','*'],
     credentials: true,
     methods: ['POST','GET','OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization'],
@@ -25,6 +25,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(cors(config));
 app.use('/.netlify/functions/api', router);
+router.options('*', cors(config));
 
 // Creates Customer => creates source => creates charge
 async function CreateCustomer(data, res) {
@@ -366,7 +367,6 @@ router.post('/sendEmail', (req, res) => {
 // TODO: make this work without relying on netlify-lamda
 router.get('/getMaster', verifyToken, (req, res) => {
     console.log(req.Authorization);
-    res.send(req);
     res.send({Approved: true});
 });
 
