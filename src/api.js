@@ -366,7 +366,7 @@ router.post('/getMaster', (req, res) => {
     const token = verifyToken(req.headers.authorization, {complete: true});
     const decode = jwt.decode(token);
     const payload = decode.payload;
-    res.send({Approved: payload});
+    res.send({Approved: decode});
     if(payload.app_metadata.roles['admin']) {
         res.send({Approved: true});
     }
