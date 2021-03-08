@@ -10,7 +10,7 @@ const cors = require('cors');
 const nodemailer = require('nodemailer'); 
 
 const config = ({
-    origin: ['https://www.lacarnivores.com','*'],
+    origin: ['https://www.lacarnivores.com'],
     credentials: true,
     methods: ['POST','GET','OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization'],
@@ -325,8 +325,10 @@ router.post('/verify', cors(config), async (req, res) => {
     var VERIFY_URL = `https://www.google.com/recaptcha/api/siteverify?secret=${RECAPTCHA_KEY}&response=${req.body.response}`;
     await fetch(VERIFY_URL, { 
         method: 'POST',
+        credentials: 'true',
         headers: { 
             "Content-Type": "application/x-www-form-urlencoded",
+            "Access-Control-Allow-Origin:": "https://www.lacarnivores.com",
         },
     }).then(res =>
         res.json()
