@@ -8,6 +8,7 @@ const bodyParser = require('body-parser');
 const fetch = require('node-fetch');
 const cors = require('cors');
 const nodemailer = require('nodemailer'); 
+const smtpTransport = require('nodemailer-smtp-transport');
 
 const config = ({
     origin: ['https://www.lacarnivores.com','http://localhost:3000'],
@@ -335,16 +336,13 @@ router.post('/verify', async (req, res) => {
 });
 
 router.post('/sendEmail', (req, res) => {
-    const transporter = nodemailer.createTransport({
-        host: 'smtp.gmail.com',
+    const transporter = nodemailer.createTransport(smtpTransport({
         service: 'gmail',
-        port: 465,
-        secure: true,
         auth: {
           user: EMAIL,
           pass: PASSWORD,
         }
-    });
+    }));
     var mailOptions = {
         from: req.body.email,
         to: EMAIL,
