@@ -320,12 +320,12 @@ router.post('/charge', async (req, res) => {
     }
 });
 
-router.post('/verify', async (req, res) => {
+router.post('/verify', cors(config), async (req, res) => {
     var VERIFY_URL = `https://www.google.com/recaptcha/api/siteverify?secret=${RECAPTCHA_KEY}&response=${req.body.response}`;
     await fetch(VERIFY_URL, { 
         method: 'POST',
         headers: { 
-            "Content-Type": "application/json",
+            "Content-Type": "application/x-www-form-urlencoded",
         },
     }).then(res =>
         res.json()
