@@ -8,6 +8,7 @@ const bodyParser = require('body-parser');
 const fetch = require('node-fetch');
 const cors = require('cors');
 const nodemailer = require('nodemailer'); 
+const jwt = require('jsonwebtoken');
 
 const config = ({
     origin: ['https://www.lacarnivores.com'],
@@ -25,7 +26,6 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(cors(config));
 app.use('/.netlify/functions/api', router);
-router.options('*', cors(config));
 
 // Creates Customer => creates source => creates charge
 async function CreateCustomer(data, res) {
@@ -321,14 +321,13 @@ router.post('/charge', async (req, res) => {
     }
 });
 
-router.post('/verify', cors(config), async (req, res) => {
+router.post('/verify', async (req, res) => {
     var VERIFY_URL = `https://www.google.com/recaptcha/api/siteverify?secret=${RECAPTCHA_KEY}&response=${req.body.response}`;
     await fetch(VERIFY_URL, { 
         method: 'POST',
         credentials: 'true',
         headers: { 
             "Content-Type": "application/x-www-form-urlencoded",
-            "Access-Control-Allow-Origin:": "https://www.lacarnivores.com",
         },
     }).then(res =>
         res.json()
@@ -368,8 +367,11 @@ router.post('/sendEmail', (req, res) => {
 
 // TODO: make this work without relying on netlify-lamda
 router.get('/getMaster', verifyToken, (req, res) => {
-    console.log(req.Authorization);
-    res.send({Approved: true});
+    const token = jwt.decode(req.token);
+    if(token.role === 'admin'){
+        res.send({Approved: true});
+    }
+    res.send({Approved: false});
 });
 
 router.post('/updateProduct', async (req, res) => {

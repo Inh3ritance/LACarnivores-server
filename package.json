@@ -25,6 +25,7 @@
     "encoding": "^0.1.13",
     "express": "^4.17.1",
     "https-proxy-agent": "^5.0.0",
+    "jsonwebtoken": "^8.5.1",
     "netlify-lambda": "^1.6.3",
     "node-fetch": "^2.6.1",
     "nodemailer": "^6.5.0",
