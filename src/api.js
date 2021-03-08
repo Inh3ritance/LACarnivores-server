@@ -254,18 +254,6 @@ function verifyData(data){
     }
 }
 
-function verifyToken(req, res, next) {
-    const bearerHeader = req.headers['Authorization'];
-    if (bearerHeader) {
-      const bearer = bearerHeader.split(' ');
-      const bearerToken = bearer[1];
-      req.token = bearerToken;
-      next();
-    } else {
-      res.sendStatus(403);
-    }
-  }
-
 // Get all products
 router.get('/products', async (_, res) => {
     stripe.products.list(
@@ -365,10 +353,19 @@ router.post('/sendEmail', (req, res) => {
     });
 });
 
+function verifyToken(bear) {
+    if (bear) {
+      const bearer = bear.split(' ');
+      const bearerToken = bearer[1];
+      return bearerToken;
+    } return;
+}
+
 // TODO: make this work without relying on netlify-lamda
-router.get('/getMaster', verifyToken, (req, res) => {
-    const token = jwt.decode(req.token);
-    if(token.role === 'admin'){
+router.get('/getMaster', (req, res) => {
+    const token = verifyToken(req.headers['Authorization']);
+    const auth = jwt.decode(token);
+    if(auth.role === 'admin') {
         res.send({Approved: true});
     }
     res.send({Approved: false});
