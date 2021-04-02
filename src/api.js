@@ -39,7 +39,7 @@ async function CreateCustomer(data, res) {
         console.log(existingCustomers.data[0].id);
         updateSource(data, existingCustomers.data[0].id, res);
     } else {
-        stripe.customers.create({
+        await stripe.customers.create({
             name: data.personal_info.name,
             email: data.personal_info.email,
             address: data.billing_address,
@@ -94,7 +94,7 @@ async function updateSource(data, customerID, res) {
 };
 
 function getSku(productID) {
-    return stripe.skus.list({
+    return await stripe.skus.list({
         product: productID
     }).then(result => {
         return Promise.resolve(result.data[0].id);
@@ -115,7 +115,7 @@ async function updateProductQuantity(itemID, cartQuantity) {
         if (parseInt(product.metadata.quantity) - cartQuantity < 0) {
             console.log('No more in stock', parseInt(product.metadata.quantity) - cartQuantity);
         } else {
-            stripe.products.update(
+            await stripe.products.update(
                 itemID, 
                 { 
                     metadata: 
@@ -133,7 +133,7 @@ async function updateProductQuantity(itemID, cartQuantity) {
 }
 
 async function getProduct(productID) {
-    return stripe.products.retrieve(
+    return await stripe.products.retrieve(
         productID,
     ).then(result => {
         return Promise.resolve(parseInt(result.metadata.quantity));
@@ -169,7 +169,7 @@ async function createOrder(data, customerID, res) {
     }
 
     if (flag) {
-        stripe.orders.create(
+        await stripe.orders.create(
         {
             currency: 'usd',
             customer: customerID,
@@ -200,7 +200,7 @@ async function createOrder(data, customerID, res) {
 }
 
 function payOrder(orderID, customerID, data) {
-    stripe.orders.pay(
+    await stripe.orders.pay(
         orderID,
         { 
             customer: customerID 
@@ -219,7 +219,7 @@ function updateOrder(chargeID, cartInfo) {
         var item = cartInfo[key];
         reciept += item.name + ' ' + item.quantity + 'x $' + item.price + '\n';
     }
-    stripe.charges.update(
+    await stripe.charges.update(
         chargeID,
         { 
             description: reciept 
