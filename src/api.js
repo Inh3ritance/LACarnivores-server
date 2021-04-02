@@ -93,7 +93,7 @@ async function updateSource(data, customerID, res) {
     );
 };
 
-function getSku(productID) {
+async function getSku(productID) {
     return await stripe.skus.list({
         product: productID
     }).then(result => {
@@ -111,7 +111,7 @@ function timeout(ms) {
 async function updateProductQuantity(itemID, cartQuantity) {
     await stripe.products.retrieve(
         itemID, 
-    ).then(product => {
+    ).then(async product => {
         if (parseInt(product.metadata.quantity) - cartQuantity < 0) {
             console.log('No more in stock', parseInt(product.metadata.quantity) - cartQuantity);
         } else {
@@ -199,7 +199,7 @@ async function createOrder(data, customerID, res) {
     }
 }
 
-function payOrder(orderID, customerID, data) {
+async function payOrder(orderID, customerID, data) {
     await stripe.orders.pay(
         orderID,
         { 
@@ -213,7 +213,7 @@ function payOrder(orderID, customerID, data) {
 }
 
 // loop through and add to reciept description
-function updateOrder(chargeID, cartInfo) {
+async function updateOrder(chargeID, cartInfo) {
     let reciept = '';
     for (var key in cartInfo) {
         var item = cartInfo[key];
