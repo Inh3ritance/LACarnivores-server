@@ -256,7 +256,7 @@ function verifyData(data){
 
 // Get all products
 router.get('/products', async (_, res) => {
-    stripe.products.list(
+    await stripe.products.list(
         { 
             active: true 
         },
@@ -269,7 +269,7 @@ router.get('/products', async (_, res) => {
 
 // Get all products
 router.get('/allProducts', async (_, res) => {
-    stripe.products.list({
+    await stripe.products.list({
     }).then(list =>
         res.send(list)
     ).catch(err => 
