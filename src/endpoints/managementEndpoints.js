@@ -65,14 +65,14 @@ const managementEndpoints = (router) => {
             description: data.description,
             metadata: data.metadata,
             type: 'good',
-            attributes: {
-                name: data.name,
-            }
         }).then(async prod => {
             await stripe.skus.create({
                 currency: 'usd',
                 inventory: {
                     type: 'infinite',
+                },
+                attributes: {
+                    name: data.name,
                 },
                 price: data.metadata.price,
                 product: prod,
