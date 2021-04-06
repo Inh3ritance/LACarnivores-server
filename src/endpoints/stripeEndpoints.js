@@ -1,6 +1,6 @@
 const stripe = require('stripe')(process.env.API_KEY);
-const { getCustomer } = require('../functions/stripeFunctions');
-const { sanitize } = require('../functions/stripeUtils');
+const { getCustomer } = require('../funct/stripeFunctions');
+const { sanitize } = require('../funct/stripeUtils');
 const data = require('../configs/data');
 
 const stripeEndpoints = (router) => {

@@ -1,6 +1,6 @@
 const jwt = require('jsonwebtoken');
-const { verifyData, verifyToken } = require('../functions/managementFunctions');
-const { getSku } = require('../functions/stripeUtils');
+const { verifyData, verifyToken } = require('../funct/managementFunctions');
+const { getSku } = require('../funct/stripeUtils');
 const stripe = require('stripe')(process.env.API_KEY);
 
 const managementEndpoints = (router) => {
