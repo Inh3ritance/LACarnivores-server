@@ -23,10 +23,10 @@ app.use(express.json());
 app.use(cors(config));
 app.use('/.netlify/functions/api', router);
 
-managementEndpoints(router);
-stripeEndpoints(router);
-recaptchaEndpoints(router);
 emailEndpoints(router);
+managementEndpoints(router);
+recaptchaEndpoints(router);
+stripeEndpoints(router);
 
 // Uncomment code below in order to run code locally using ` node api.js `
 /*const port = process.env.PORT || 9000;
