@@ -76,7 +76,7 @@ const managementEndpoints = (router) => {
                     name: data.name,
                 },
                 price: data.metadata.price,
-                product: prod,
+                product: prod.id,
             }).catch(err => {
                 console.log(err);
             });
