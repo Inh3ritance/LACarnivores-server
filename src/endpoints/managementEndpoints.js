@@ -68,7 +68,8 @@ const managementEndpoints = (router) => {
             await stripe.skus.create({
                 currency: 'usd',
                 inventory: {
-                    type: 'infinite',
+                    type: 'finite',
+                    quantity: 1,
                 },
                 price: data.metadata.price,
                 product: prod,
