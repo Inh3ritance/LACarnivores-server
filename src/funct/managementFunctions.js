@@ -24,7 +24,7 @@ function verifyData(data) {
             active: data.active,
             metadata: {
                 type: data.type.length == 0 ? "PlaceHolder" : data.type,
-                qunatity: data.quantity < 0 ? 0 : data.quantity,
+                quantity: data.quantity < 0 ? 0 : data.quantity,
                 price: data.price < 0 ? 0 : data.price,
             },
         };

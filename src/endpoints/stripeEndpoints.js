@@ -27,7 +27,7 @@ const stripeEndpoints = (router) => {
             getCustomer();
             res.sendStatus(202);
         } catch (err) {
-            res.send(500);
+            res.sendStatus(500);
             console.log(err);
         }
     });

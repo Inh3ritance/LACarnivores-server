@@ -1,5 +1,6 @@
 const stripe = require('stripe')(process.env.API_KEY);
 const { getProduct, getSku, timeout } = require('./stripeUtils');
+const { shipping } = require('./easypostFunctions');
 
 // Creates Customer => creates source => creates charge 
 async function getCustomer() {
@@ -103,6 +104,8 @@ async function createOrder(customerID) {
         var item = info.getCart[key];
         var sku = await getSku(item.id);
         var prod = await getProduct(item.id);
+        console.log(sku);
+        console.log(prod);
         cart.push({
             type: 'sku',
             parent: sku.id,
@@ -182,8 +185,7 @@ async function updateOrder(chargeID) {
         },
     ).then(charge => {
         console.log(charge);
-        return 202;
-        //shipping(data); // If charge is succesful, move onto shipping process
+        shipping(); // If charge is succesful, move onto shipping process
     }).catch(err => 
         console.log(err)
     );
