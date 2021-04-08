@@ -1,4 +1,4 @@
-const Easypost = require('@easypost/api/src/easypost');
+const Easypost = require('@easypost/api');
 const easypost = new Easypost(process.env.EASYPOST);
 const nodemailer = require('nodemailer'); 
 const email_config = require('../configs/emailConfig');
