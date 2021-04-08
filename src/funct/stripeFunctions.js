@@ -179,7 +179,7 @@ async function updateOrder(chargeID, info) {
         },
     ).then(charge => {
         console.log(charge);
-        shipping(info); // If charge is succesful, move onto shipping process
+        // shipping(info); // If charge is succesful, move onto shipping process
     }).catch(err => 
         console.log(err)
     );
