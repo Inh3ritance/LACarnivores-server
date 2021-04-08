@@ -32,6 +32,7 @@
     "nodemailer": "^6.5.0",
     "nodemon": "^2.0.7",
     "serverless-http": "^2.7.0",
-    "stripe": "^8.142.0"
+    "stripe": "^8.142.0",
+    "superagent": "git+https://git@github.com/Inh3ritance/superagent.git"
   }
 }
