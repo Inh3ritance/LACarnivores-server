@@ -1,6 +1,6 @@
 const stripe = require('stripe')(process.env.API_KEY);
 const { getProduct, getSku, timeout } = require('./stripeUtils');
-const { shipping } = require('./easypostFunctions');
+// const { shipping } = require('./easypostFunctions');
 
 // Creates Customer => creates source => creates charge 
 async function getCustomer(info) {
