@@ -3,8 +3,7 @@ const { getProduct, getSku, timeout } = require('./stripeUtils');
 const { shipping } = require('./easypostFunctions');
 
 // Creates Customer => creates source => creates charge 
-async function getCustomer() {
-    const { info } = require('../endpoints/stripeEndpoints');
+async function getCustomer(info) {
     let existingCustomers = await stripe.customers.list({ 
         email: info.getPersonalInfo.email,
     }).catch(err =>
@@ -13,50 +12,47 @@ async function getCustomer() {
 
     if (existingCustomers.data.length) { // Use existing customerUID and pass in rest of data to create charge
         console.log(existingCustomers.data[0].id);
-        updateSource(existingCustomers.data[0].id);
+        updateSource(existingCustomers.data[0].id, info);
     } else {
         await stripe.customers.create(
             info.getPersonalInfo,
         ).then(customer =>
-            createSource(customer.id)
+            createSource(customer.id, info)
         ).catch(err => 
             console.log(err)
         );
     }
 }
 
-async function updateSource(customerID) {
-    const { info } = require('../endpoints/stripeEndpoints');
+async function updateSource(customerID, info) {
     await stripe.customers.update(
         customerID,
         { 
             source: info.getCard.token.id,
         },
     ).then(card => {
-        updateCard(card.id, card.default_source);
-        createOrder(customerID);
+        updateCard(card.id, card.default_source, info);
+        createOrder(customerID, info);
     }).catch(err =>
         console.log(err)
     );
 };
 
-async function createSource(customerID) {
-    const { info } = require('../endpoints/stripeEndpoints');
+async function createSource(customerID, info) {
     await stripe.customers.createSource(
         customerID,
         { 
             source: info.getCard.token.id,
         },
     ).then(card => {
-        updateCard(card.customer, card.id);
-        createOrder(customerID);
+        updateCard(card.customer, card.id, info);
+        createOrder(customerID, info);
     }).catch(err =>
         console.log(err)
     );
 };
 
-async function updateCard(customerID, cardID) {
-    const { info } = require('../endpoints/stripeEndpoints');
+async function updateCard(customerID, cardID, info) {
     await stripe.customers.updateSource(
         customerID, cardID,
         {
@@ -96,8 +92,7 @@ async function updateProductQuantity(itemID, cartQuantity) {
     );
 }
 
-async function createOrder(customerID) {
-    const { info } = require('../endpoints/stripeEndpoints');
+async function createOrder(customerID, info) {
     let cart = [];
     for (var key in info.getCart) {
         await timeout(1000);
@@ -147,7 +142,7 @@ async function createOrder(customerID) {
                 },
             },
         }).then(result => {
-            payOrder(result.id, customerID);
+            payOrder(result.id, customerID, info);
         }).catch(e => {
             console.log(e);
         });
@@ -156,22 +151,21 @@ async function createOrder(customerID) {
     }
 }
 
-async function payOrder(orderID, customerID) {
+async function payOrder(orderID, customerID, info) {
     await stripe.orders.pay(
         orderID,
         { 
             customer: customerID 
         },
     ).then(order =>
-        updateOrder(order.charge)
+        updateOrder(order.charge, info)
     ).catch(err => 
         console.log(err)
     );
 }
 
 // loop through and add to reciept description
-async function updateOrder(chargeID) {
-    const { info } = require('../endpoints/stripeEndpoints');
+async function updateOrder(chargeID, info) {
     cartInfo = info.getCart;
     let reciept = '';
     for (var key in cartInfo) {
@@ -185,7 +179,7 @@ async function updateOrder(chargeID) {
         },
     ).then(charge => {
         console.log(charge);
-        shipping(); // If charge is succesful, move onto shipping process
+        shipping(info); // If charge is succesful, move onto shipping process
     }).catch(err => 
         console.log(err)
     );

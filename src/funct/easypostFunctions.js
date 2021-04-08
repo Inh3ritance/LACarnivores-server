@@ -4,8 +4,7 @@ const nodemailer = require('nodemailer');
 const email_config = require('../configs/emailConfig');
 const EMAIL = (process.env.EMAIL);
 
-async function shipping() {
-    const { info } = require('../endpoints/stripeEndpoints');
+async function shipping(info) {
 
     const toAddress = new easypost.Address({
         name: info.getPersonalInfo.name,

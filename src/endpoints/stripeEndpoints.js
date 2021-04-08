@@ -23,8 +23,7 @@ const stripeEndpoints = (router) => {
         req.body.cart = await sanitize(req.body.cart);
         try {
             const info = new data(req.body);
-            module.exports = { info };
-            getCustomer();
+            getCustomer(info);
             res.sendStatus(202);
         } catch (err) {
             res.sendStatus(500);
