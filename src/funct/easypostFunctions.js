@@ -1,4 +1,4 @@
-import Easypost from '@easypost/api';
+import Easypost from 'node-easypost';
 import { createTransport } from 'nodemailer'; 
 import email_config from '../configs/emailConfig';
 const easypost = new Easypost(process.env.EASYPOST);
