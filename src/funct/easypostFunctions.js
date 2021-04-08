@@ -1,5 +1,4 @@
-require('babel-polyfill');
-const Easypost = require('@easypost/api');
+const Easypost = require('@easypost/api/src/easypost');
 const easypost = new Easypost(process.env.EASYPOST);
 const nodemailer = require('nodemailer'); 
 const email_config = require('../configs/emailConfig');
