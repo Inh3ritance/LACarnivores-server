@@ -1,11 +1,11 @@
-const Easypost = require('@easypost/api');
+import Easypost from '@easypost/api';
+import { createTransport } from 'nodemailer'; 
+import email_config from '../configs/emailConfig';
 const easypost = new Easypost(process.env.EASYPOST);
-const nodemailer = require('nodemailer'); 
-const email_config = require('../configs/emailConfig');
 const EMAIL = (process.env.EMAIL);
 
 async function shipping(info) {
-/*
+
     const toAddress = new easypost.Address({
         name: info.getPersonalInfo.name,
         street1: info.getShippingAddress.line1,
@@ -70,7 +70,7 @@ async function shipping(info) {
             let tracking_str = tracking_labels.join('/n');
             let postage_str = postage_labels.join('/n');
             let public_str = public_tracking.join('/n');
-            const transporter = nodemailer.createTransport(email_config);
+            const transporter = createTransport(email_config);
             const toUser = {
                 from: EMAIL,
                 to: info.getPersonalInfo.email,
@@ -101,9 +101,8 @@ async function shipping(info) {
     } catch(e) {
         console.log(e);
     }
-    */
 }
 
-module.exports = {
+export default {
     shipping,
 }
