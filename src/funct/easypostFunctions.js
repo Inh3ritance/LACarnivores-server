@@ -5,7 +5,7 @@ const email_config = require('../configs/emailConfig');
 const EMAIL = (process.env.EMAIL);
 
 async function shipping(info) {
-
+/*
     const toAddress = new easypost.Address({
         name: info.getPersonalInfo.name,
         street1: info.getShippingAddress.line1,
@@ -101,6 +101,7 @@ async function shipping(info) {
     } catch(e) {
         console.log(e);
     }
+    */
 }
 
 module.exports = {
