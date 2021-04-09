@@ -1,22 +1,22 @@
 const RECAPTCHA_KEY = (process.env.RECAPTCHA_KEY);
-const fetch = require('node-fetch');
+const { httpRequest } = require('../funct/reCaptchaFunctions');
 
 const recaptchaEndpoints = (router) => {
     router.post('/verify', async (req, res) => {
-        var VERIFY_URL = `https://www.google.com/recaptcha/api/siteverify?secret=${RECAPTCHA_KEY}&response=${req.body.response}`;
-        await fetch(VERIFY_URL, { 
-            method: 'POST',
-            credentials: 'true',
-            headers: { 
-                "Content-Type": "application/x-www-form-urlencoded",
-            },
-        }).then(res =>
-            res.json()
-        ).then(json => 
+        const params = {
+            host: 'google.com',
+            path: `https://www.google.com/recaptcha/api/siteverify?secret=${RECAPTCHA_KEY}&response=${req.body.response}`,
+            method: 'POST'
+        }
+        return httpRequest(params).then((body) => {
+            return body
+        }).then((json) => {
+            console.log(json);
             res.send(json)
-        ).catch(err => 
-            console.log(err)
-        );
+        }).catch((err) => {
+            console.error(err);
+            res.send(err);
+        });
     });
 }
 
