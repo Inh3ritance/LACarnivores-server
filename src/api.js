@@ -1,5 +1,15 @@
 require('dotenv').config();
 
+module.exports = {
+    onBuild: () => {
+        global.GENTLY = false;
+        console.log(global.GENTLY);
+    },
+    onEnd: () => {
+        console.log(global.GENTLY);
+    }
+}
+
 const express = require("express");
 const app = express();
 const router = express.Router();
