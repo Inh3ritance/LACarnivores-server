@@ -1,6 +1,6 @@
-import Easypost from '@easypost/api';
-import { createTransport } from 'nodemailer'; 
-import email_config from '../configs/emailConfig';
+const Easypost = require('@easypost/api');
+const { createTransport } = require('nodemailer'); 
+const email_config = require('../configs/emailConfig');
 const easypost = new Easypost(process.env.EASYPOST);
 const EMAIL = (process.env.EMAIL);
 
@@ -103,6 +103,6 @@ async function shipping(info) {
     }
 }
 
-export default {
+module.exports = {
     shipping,
 }
