@@ -915,7 +915,7 @@
       }
     },
     "@easypost/api": {
-      "version": "git+https://git@github.com/Inh3ritance/easypost-node.git#9e7b2603f008e9531318b60c9f1acea2da360a50",
+      "version": "git+https://git@github.com/Inh3ritance/easypost-node.git#6b3990b6c50c5aaed2803c622efba1384670ebff",
       "from": "git+https://git@github.com/Inh3ritance/easypost-node.git",
       "requires": {
         "core-js": "3.1.3",
