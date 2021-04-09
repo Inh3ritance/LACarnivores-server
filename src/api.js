@@ -1,9 +1,13 @@
 require('dotenv').config();
 
 module.exports = {
-    onPreBuild: () => {
-      global.GENTLY = false;
+    onBuild: () => {
+        global.GENTLY = false;
+        console.log(global.GENTLY);
     },
+    onEnd: () => {
+        console.log(global.GENTLY);
+    }
 }
 
 const express = require("express");
