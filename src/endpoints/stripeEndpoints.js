@@ -24,11 +24,11 @@ const stripeEndpoints = (router) => {
         try {
             const info = new data(req.body);
             await getCustomer(info);
-            res.sendStatus(202);
         } catch (err) {
             res.sendStatus(500);
             console.log(err);
         }
+        res.sendStatus(202);
     });
 
 }
