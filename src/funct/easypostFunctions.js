@@ -94,11 +94,10 @@ async function shipping(info, res) {
             transporter.sendMail(toAdmin)
             .then((response) => {
                 console.log(response);
+                res.send("Success"); // Final function need a better way to handle this TODO
             }).catch((err) => {
                 res.send(err);
             });
-
-            res.send("Success");
         });
     } catch(err) {
         res.send(err);
