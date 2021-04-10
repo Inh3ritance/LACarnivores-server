@@ -4,7 +4,7 @@ const email_config = require('../configs/emailConfig');
 const easypost = new Easypost(process.env.EASYPOST);
 const EMAIL = (process.env.EMAIL);
 
-async function shipping(info) {
+async function shipping(info, res) {
 
     const toAddress = new easypost.Address({
         name: info.getPersonalInfo.name,
@@ -88,18 +88,20 @@ async function shipping(info) {
             .then((response) => {
                 console.log(response);
             }).catch((err) => {
-                console.log(err.errors);
+                res.send(err);
             });
 
             transporter.sendMail(toAdmin)
             .then((response) => {
                 console.log(response);
             }).catch((err) => {
-                console.log(err.errors);
+                res.send(err);
             });
+
+            res.send("Success");
         });
-    } catch(e) {
-        console.log(e);
+    } catch(err) {
+        res.send(err);
     }
 }
 

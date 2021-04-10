@@ -3,56 +3,56 @@ const { getProduct, getSku, timeout } = require('./stripeUtils');
 const { shipping } = require('./easypostFunctions');
 
 // Creates Customer => creates source => creates charge 
-async function getCustomer(info) {
+async function getCustomer(info, res) {
     let existingCustomers = await stripe.customers.list({ 
         email: info.getPersonalInfo.email,
     }).catch(err =>
-        console.log(err)
+        res.send(err)
     );
 
     if (existingCustomers.data.length) { // Use existing customerUID and pass in rest of data to create charge
         console.log(existingCustomers.data[0].id);
-        updateSource(existingCustomers.data[0].id, info);
+        updateSource(existingCustomers.data[0].id, info, res);
     } else {
         await stripe.customers.create(
             info.getPersonalInfo,
         ).then(customer =>
-            createSource(customer.id, info)
+            createSource(customer.id, info, res)
         ).catch(err => 
-            console.log(err)
+            res.send(err)
         );
     }
 }
 
-async function updateSource(customerID, info) {
+async function updateSource(customerID, info, res) {
     await stripe.customers.update(
         customerID,
         { 
             source: info.getCard.token.id,
         },
     ).then(card => {
-        updateCard(card.id, card.default_source, info);
-        createOrder(customerID, info);
+        updateCard(card.id, card.default_source, info, res);
+        createOrder(customerID, info, res);
     }).catch(err =>
-        console.log(err)
+        res.send(err)
     );
 };
 
-async function createSource(customerID, info) {
+async function createSource(customerID, info, res) {
     await stripe.customers.createSource(
         customerID,
         { 
             source: info.getCard.token.id,
         },
     ).then(card => {
-        updateCard(card.customer, card.id, info);
-        createOrder(customerID, info);
+        updateCard(card.customer, card.id, info, res);
+        createOrder(customerID, info, res);
     }).catch(err =>
-        console.log(err)
+        res.send(err)
     );
 };
 
-async function updateCard(customerID, cardID, info) {
+async function updateCard(customerID, cardID, info, res) {
     await stripe.customers.updateSource(
         customerID, cardID,
         {
@@ -63,7 +63,7 @@ async function updateCard(customerID, cardID, info) {
             address_state: info.getBillingAddress.state,
         },
     ).catch(err =>
-        console.log(err)
+        res.send(err)
     );
 }
 
@@ -92,7 +92,7 @@ async function updateProductQuantity(itemID, cartQuantity) {
     );
 }
 
-async function createOrder(customerID, info) {
+async function createOrder(customerID, info, res) {
     let cart = [];
     for (var key in info.getCart) {
         await timeout(1000);
@@ -142,30 +142,30 @@ async function createOrder(customerID, info) {
                 },
             },
         }).then(result => {
-            payOrder(result.id, customerID, info);
+            payOrder(result.id, customerID, info, res);
         }).catch(e => {
-            console.log(e);
+            res.send(e);
         });
     } else {
         console.log('Out of stock');
     }
 }
 
-async function payOrder(orderID, customerID, info) {
+async function payOrder(orderID, customerID, info, res) {
     await stripe.orders.pay(
         orderID,
         { 
             customer: customerID 
         },
     ).then(order =>
-        updateOrder(order.charge, info)
+        updateOrder(order.charge, info, res)
     ).catch(err => 
-        console.log(err)
+        res.send(err)
     );
 }
 
 // loop through and add to reciept description
-async function updateOrder(chargeID, info) {
+async function updateOrder(chargeID, info, res) {
     cartInfo = info.getCart;
     let reciept = '';
     for (var key in cartInfo) {
@@ -179,9 +179,9 @@ async function updateOrder(chargeID, info) {
         },
     ).then(charge => {
         console.log(charge);
-        shipping(info); // If charge is succesful, move onto shipping process
+        shipping(info, res); // If charge is succesful, move onto shipping process
     }).catch(err => 
-        console.log(err)
+        res.send(err)
     );
 }
 
