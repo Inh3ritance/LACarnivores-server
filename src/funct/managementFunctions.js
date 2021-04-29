@@ -28,7 +28,7 @@ function verifyData(data) {
                 type: data.type.length == 0 ? "PlaceHolder" : data.type,
                 quantity: data.quantity < 0 ? 0 : data.quantity,
                 price: data.price < 0 ? 0 : data.price,
-                featured: data.featured.length !== 'y' ? 'n' : data.featured, 
+                featured: data.featured !== "y" ? "n" : data.featured, 
             },
         };
     } catch(err) {
