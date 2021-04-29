@@ -1,3 +1,5 @@
+const jwt = require('jsonwebtoken');
+
 // JSON web token, strip bearer
 function verifyToken(bear) {
     if (bear) {

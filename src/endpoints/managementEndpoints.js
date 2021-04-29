@@ -1,4 +1,3 @@
-const jwt = require('jsonwebtoken');
 const { verifyData, verifyToken, adminApproval } = require('../funct/managementFunctions');
 const { getSku } = require('../funct/stripeUtils');
 const stripe = require('stripe')(process.env.API_KEY);
