@@ -1,17 +1,16 @@
 const jwt = require('jsonwebtoken');
-const { verifyData, verifyToken } = require('../funct/managementFunctions');
+const { verifyData, verifyToken, adminApproval } = require('../funct/managementFunctions');
 const { getSku } = require('../funct/stripeUtils');
 const stripe = require('stripe')(process.env.API_KEY);
 
 const managementEndpoints = (router) => {
-    // TODO: make this work without relying on netlify-lamda // Later, now its ok
+    // Verify admin to enter Masterpage
     router.post('/getMaster', (req, res) => {
-        const token = verifyToken(req.headers.authorization, {complete: true});
-        const decode = jwt.decode(token);
-        if(decode.app_metadata.roles[0] === "admin") {
-            res.send({Approved: true});
+        if(adminApproval(req)){
+            res.send({ Approved: true });
+            return;
         }
-        res.send({Approved: false});
+        res.send({ Approved: false });
     });
 
     // Get all products

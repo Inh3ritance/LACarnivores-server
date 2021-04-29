@@ -33,7 +33,15 @@ function verifyData(data) {
     }
 }
 
+function adminApproval(req) {
+    const token = verifyToken(req.headers.authorization, {complete: true});
+    const decode = jwt.decode(token);
+    if(decode.app_metadata.roles[0] === "admin") return true;
+    return false;
+}
+
 module.exports = {
     verifyData,
     verifyToken,
+    adminApproval,
 }

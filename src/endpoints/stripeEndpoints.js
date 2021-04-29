@@ -20,6 +20,10 @@ const stripeEndpoints = (router) => {
 
     // pass data along from info
     router.post('/charge', async (req, res) => {
+        if(req.body.card.error) {
+            res.send(err);
+            return;
+        }
         req.body.cart = await sanitize(req.body.cart);
         try {
             const info = new data(req.body);
