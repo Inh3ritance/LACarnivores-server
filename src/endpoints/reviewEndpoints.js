@@ -78,7 +78,6 @@ const reviewEndpoints = (router) => {
     });
 
     router.post('/getReviews', (req, res) => {
-        console.log("ping");
         if(req.body.review_id !== undefined)
         adminClient.query(q.Exists(q.Ref(q.Collection('Reviews'), req.body.review_id)))
         .then(ret => {
