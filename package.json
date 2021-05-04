@@ -24,6 +24,7 @@
     "dotenv": "^8.2.0",
     "encoding": "^0.1.13",
     "express": "^4.17.1",
+    "faunadb": "^4.2.0",
     "https": "^1.0.0",
     "https-proxy-agent": "^5.0.0",
     "jsonwebtoken": "^8.5.1",

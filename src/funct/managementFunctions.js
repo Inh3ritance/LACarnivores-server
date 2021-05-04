@@ -13,12 +13,13 @@ function verifyToken(bear) {
 function verifyData(data) {
     try {
         var temp = [];
-        data.images.forEach( element => {
+        data.images.forEach(element => {
             if(element.length == 0)
                 temp.push('https://files.stripe.com/links/fl_test_wYR38Z6vDNAmp37OBQmOa1tq'); // provide unavailable image
             else
                 temp.push(element);
         });
+        // int types convert to ints IMPORTANT!!!!
         return {
             name: data.name.length == 0 ? "PlaceHolder" : data.name,
             images: temp,
@@ -29,6 +30,15 @@ function verifyData(data) {
                 quantity: data.quantity < 0 ? 0 : data.quantity,
                 price: data.price < 0 ? 0 : data.price,
                 featured: data.featured !== "y" ? "n" : data.featured, 
+                width: data.width == 0 ? 0 : data.width,
+                height: data.height == 0 ? 0 : data.height,
+                length: data.length == 0 ? 0 : data.length,
+                weight: data.weight == 0 ? 0 : data.weight,
+                recieve: data.recieve.length == 0 ? "PlaceHolder" : data.recieve,
+                zones: data.zones.length == 0 ? "-1" : data.zones,
+                water: data.water.length == 0 ? "PlaceHolder" : data.water,
+                soil: data.soil.length == 0 ? "PlaceHolder" : data.soil,
+                light: data.light.length == 0 ? "PlaceHolder" : data.light,
             },
         };
     } catch(err) {

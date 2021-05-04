@@ -10,6 +10,7 @@ const { managementEndpoints } = require('./endpoints/managementEndpoints');
 const { stripeEndpoints } = require('./endpoints/stripeEndpoints');
 const { recaptchaEndpoints } = require('./endpoints/recaptchaEndpoints');
 const { emailEndpoints } = require('./endpoints/emailEndpoints');
+const { reviewEndpoints } = require('./endpoints/reviewEndpoints');
 
 const config = ({
     origin: ['https://www.lacarnivores.com'],
@@ -27,6 +28,7 @@ emailEndpoints(router);
 managementEndpoints(router);
 recaptchaEndpoints(router);
 stripeEndpoints(router);
+reviewEndpoints(router);
 
 // Uncomment code below in order to run code locally using ` node api.js `
 /*const port = process.env.PORT || 9000;
