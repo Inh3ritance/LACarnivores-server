@@ -19,18 +19,22 @@ async function shipping(info, res) {
 
     // Replace with personal info TODO
     const fromAddress = new easypost.Address({
-        name: 'EasyPost',
-        street1: '118 2nd Street',
-        city: 'San Francisco',
+        name: 'LaCArnivores',
+        street1: '118 2nd Street', //
+        city: 'Los Angeles',
         state: 'CA',
-        zip: '94105',
-        phone: '415-123-4567',
+        zip: '90255', //
+        phone: '323-123-4567', //
         email: EMAIL,
         country: 'US',
     });
 
     // Adjust item weights and dimensions for shipment, optimize for lower costs... TODO
     const parcel = new easypost.Parcel({
+        mode: "test",
+        width: 0,
+        height: 0,
+        length: 0,
         weight: 3,
     });
 

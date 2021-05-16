@@ -38,41 +38,44 @@ const reviewEndpoints = (router) => {
                         });
                 }).catch(err => console.log(err));
             } else {
-                // need a better way than this!!!
-                var userArr = req.body.users;
-                userArr.push(req.body.user);
-                var reviewArr = req.body.reviews;
-                reviewArr.push(req.body.review);
-                var rateArr = req.body.ratings;
-                rateArr.push(req.body.rating);
-                //
-                adminClient.query(
-                    q.Update(q.Ref(q.Collection('Reviews'), req.body.review_id),
-                        {
-                            data: {
-                                users: userArr,
-                                reviews: reviewArr,
-                                ratings: rateArr,
+                adminClient.query(q.Get(q.Ref(q.Collection('Reviews'), req.body.review_id)))
+                .then(data => {
+                    var userArr = data.data.users;
+                    userArr.push(req.body.user);
+                    var reviewArr = data.data.reviews;
+                    reviewArr.push(req.body.review);
+                    var rateArr = data.data.ratings;
+                    rateArr.push(req.body.rating);
+                    adminClient.query(
+                        q.Update(q.Ref(q.Collection('Reviews'), req.body.review_id),
+                            {
+                                data: {
+                                    users: userArr,
+                                    reviews: reviewArr,
+                                    ratings: rateArr,
+                                }
                             }
-                        }
+                        )
                     )
-                )
-                .then(async result => {
-                    console.log(result);
-                    await stripe.products.update(
-                        req.body.id,
-                        {
-                            metadata: {
-                                review_id: result.ref.id,
-                                ratings: (rateArr.reduce((a , b) => a + b, 0)/rateArr.length),
-                            }
-                        }).then(prod => {
-                            console.log(prod);
-                            res.send("Success");
-                        }).catch(err => {
-                            console.log(err);
-                        });
-                }).catch(err => console.log(err));
+                    .then(async result => {
+                        console.log(result);
+                        await stripe.products.update(
+                            req.body.id,
+                            {
+                                metadata: {
+                                    review_id: result.ref.id,
+                                    ratings: (rateArr.reduce((a , b) => a + b, 0)/rateArr.length),
+                                }
+                            }).then(prod => {
+                                console.log(prod);
+                                res.send("Success");
+                            }).catch(err => {
+                                console.log(err);
+                            });
+                    }).catch(err => console.log(err));
+                }).catch(err => {
+                    console.log(err);
+                });
             }
         }).catch(err => console.log(err));
     });
