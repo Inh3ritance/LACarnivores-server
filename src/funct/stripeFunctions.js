@@ -142,6 +142,7 @@ async function createOrder(customerID, info, res) {
                 },
             },
         }).then(result => {
+            console.log(result);
             payOrder(result.id, customerID, info, res);
         }).catch(e => {
             res.send(e);
@@ -157,9 +158,10 @@ async function payOrder(orderID, customerID, info, res) {
         { 
             customer: customerID 
         },
-    ).then(order =>
+    ).then(order => {
+        console.log(order);
         updateOrder(order.charge, info, res)
-    ).catch(err => 
+    }).catch(err => 
         res.send(err)
     );
 }
