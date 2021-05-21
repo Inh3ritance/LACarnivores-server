@@ -141,9 +141,9 @@ async function createOrder(customerID, info, res) {
                     country: 'US',
                 },
             },
-        }).then(result => {
+        }).then(async result => {
             console.log(result);
-            payOrder(result.id, customerID, info, res);
+            await payOrder(result.id, customerID, info, res);
         }).catch(e => {
             res.send(e);
         });
@@ -158,9 +158,9 @@ async function payOrder(orderID, customerID, info, res) {
         { 
             customer: customerID 
         },
-    ).then(order => {
+    ).then(async order => {
         console.log(order);
-        updateOrder(order.charge, info, res)
+        await updateOrder(order.charge, info, res)
     }).catch(err => 
         res.send(err)
     );
@@ -179,9 +179,9 @@ async function updateOrder(chargeID, info, res) {
         { 
             description: reciept 
         },
-    ).then(charge => {
+    ).then(async charge => {
         console.log(charge);
-        shipping(info, res); // If charge is succesful, move onto shipping process
+        await shipping(info, res); // If charge is succesful, move onto shipping process
     }).catch(err => 
         res.send(err)
     );
