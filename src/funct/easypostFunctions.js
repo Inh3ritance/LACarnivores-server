@@ -6,7 +6,8 @@ const EMAIL = (process.env.EMAIL);
 
 async function shipping(info, res) {
 
-    console.log("Now in Shipping methods...")
+    console.log("Now in Shipping methods...");
+    console.log(info.getCart());
 
     const toAddress = new easypost.Address({
         name: info.getPersonalInfo.name,
