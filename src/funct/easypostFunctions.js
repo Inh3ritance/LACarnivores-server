@@ -6,6 +6,8 @@ const EMAIL = (process.env.EMAIL);
 
 async function shipping(info, res) {
 
+    console.log("Now in Shipping methods...")
+
     const toAddress = new easypost.Address({
         name: info.getPersonalInfo.name,
         street1: info.getShippingAddress.line1,
@@ -31,10 +33,6 @@ async function shipping(info, res) {
 
     // Adjust item weights and dimensions for shipment, optimize for lower costs... TODO
     const parcel = new easypost.Parcel({
-        mode: "test",
-        width: 0,
-        height: 0,
-        length: 0,
         weight: 3,
     });
 
