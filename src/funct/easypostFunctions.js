@@ -45,7 +45,7 @@ async function shipping(info, res) {
             shipments.push(
                 new easypost.Shipment({
                     parcel: new easypost.Parcel({
-                        weight: current_weight,
+                        weight: parseInt(current_weight),
                     })
                 })
             );
