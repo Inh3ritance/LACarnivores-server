@@ -31,6 +31,7 @@ async function sanitize(cart) {
         var prod = await getProduct(element.id);
         element.price = sku.price/100;
         element.name = prod.name;
+        element.weight = prod.metadata.weight;
         arr.push(element);
     };
     console.log(arr);
