@@ -33,6 +33,7 @@ async function sanitize(cart) {
         element.name = prod.name;
         arr.push(element);
     });
+    console.log(arr);
     return arr;
 }
 

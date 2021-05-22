@@ -25,11 +25,7 @@ const stripeEndpoints = (router) => {
             return;
         }
         try {
-            console.log(req.body);
-            console.log(req.body.cart)
             req.body.cart = await sanitize(req.body.cart);
-            console.log(req.body);
-            console.log(req.body.cart);
             const info = new data(req.body);
             await getCustomer(info, res);
         } catch (err) {
