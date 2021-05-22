@@ -26,13 +26,13 @@ async function getProduct(productID) {
 
 async function sanitize(cart) {
     let arr = [];
-    cart.forEach(async element => {
+    for(let element of cart) {
         var sku = await getSku(element.id);
         var prod = await getProduct(element.id);
         element.price = sku.price/100;
         element.name = prod.name;
         arr.push(element);
-    });
+    };
     console.log(arr);
     return arr;
 }
