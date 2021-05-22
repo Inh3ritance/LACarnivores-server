@@ -41,25 +41,26 @@ async function shipping(info, res) {
     let order_details = [];
 
     for(var i = 0; i < info.getCart.length; i++) {
+        var item_weight = parseInt(info.getCart[i].weight);
         if(i + 1 == info.getCart.length) {
             shipments.push(
                 new easypost.Shipment({
                     parcel: new easypost.Parcel({
-                        weight: parseInt(current_weight),
+                        weight: 5, // test
                     })
                 })
             );
             shipment_details.push(info.getCart[i].name);
             order_details.push(shipment_details);
         } else {
-            if(parseInt(info.getCart[i].weight) + current_weight <= 13) {
-                current_weight += parseInt(info.getCart[i].weight);
+            if(item_weight + current_weight <= 13) {
+                current_weight += item_weight;
                 shipment_details.push(info.getCart[i].name);
             } else {
                 shipments.push(
                     new easypost.Shipment({
                         parcel: new easypost.Parcel({
-                            weight: parseInt(current_weight),
+                            weight: 5, // test
                         })
                     })
                 );
