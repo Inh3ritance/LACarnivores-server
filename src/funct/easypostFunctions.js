@@ -52,8 +52,8 @@ async function shipping(info, res) {
             shipment_details.push(info.getCart[i].name);
             order_details.push(shipment_details);
         } else {
-            if(info.getCart[i].weight + current_weight <= 13) {
-                current_weight += info.getCart[i].weight;
+            if(parseInt(info.getCart[i].weight) + current_weight <= 13) {
+                current_weight += parseInt(info.getCart[i].weight);
                 shipment_details.push(info.getCart[i].name);
             } else {
                 shipments.push(
@@ -64,7 +64,7 @@ async function shipping(info, res) {
                     })
                 );
                 order_details.push(shipment_details);
-                current_weight = info.getCart[i].weight;
+                current_weight = parseInt(info.getCart[i].weight);
                 shipment_details = [];
                 shipment_details.push(info.getCart[i].name);
             }
