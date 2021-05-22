@@ -34,7 +34,6 @@ async function sanitize(cart) {
         element.weight = prod.metadata.weight;
         arr.push(element);
     };
-    console.log(arr);
     return arr;
 }
 
