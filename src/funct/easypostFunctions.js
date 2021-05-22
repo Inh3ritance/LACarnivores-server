@@ -33,6 +33,7 @@ async function shipping(info, res) {
     });
 
     // Adjust item weights and dimensions for shipment, optimize for lower costs... TODO
+    // USPS standard is 13 oz. for now set as 12 oz max to avoid over weight packages.
     const parcel = new easypost.Parcel({
         weight: 3,
     });
