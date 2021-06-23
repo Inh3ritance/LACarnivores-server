@@ -19,22 +19,22 @@
   },
   "homepage": "https://github.com/Inh3ritance/LACarnivores-server#readme",
   "dependencies": {
-    "@easypost/api": "^3.10.1",
+    "@easypost/api": "^3.11.2",
     "cors": "^2.8.5",
-    "dotenv": "^8.2.0",
+    "dotenv": "^8.6.0",
     "encoding": "^0.1.13",
     "express": "^4.17.1",
-    "faunadb": "^4.2.0",
+    "faunadb": "^4.3.0",
     "https": "^1.0.0",
     "https-proxy-agent": "^5.0.0",
     "jsonwebtoken": "^8.5.1",
     "netlify-lambda": "^1.6.3",
-    "nodemailer": "^6.5.0",
+    "nodemailer": "^6.6.2",
     "nodemon": "^2.0.7",
     "serverless-http": "^2.7.0",
-    "stripe": "^8.142.0"
+    "stripe": "^8.156.0"
   },
   "devDependencies": {
-    "webpack": "^3.0.0"
+    "webpack": "^3.12.0"
   }
 }
