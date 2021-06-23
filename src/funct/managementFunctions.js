@@ -39,6 +39,7 @@ function verifyData(data) {
                 water: data.water.length == 0 ? "PlaceHolder" : data.water,
                 soil: data.soil.length == 0 ? "PlaceHolder" : data.soil,
                 light: data.light.length == 0 ? "PlaceHolder" : data.light,
+                review_id: data.review_id.length == 0 ? "" : data.review_id
             },
         };
     } catch(err) {

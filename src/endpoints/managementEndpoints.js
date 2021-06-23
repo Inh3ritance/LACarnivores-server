@@ -70,8 +70,7 @@ const managementEndpoints = (router) => {
                 description: data.description,
                 metadata: data.metadata,
                 type: 'good',
-                attributes: ["name"],
-                review_id: '',
+                attributes: ["name"]
             }).then(async prod => {
                 await stripe.skus.create({
                     currency: 'usd',
