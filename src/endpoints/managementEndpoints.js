@@ -22,6 +22,42 @@ const managementEndpoints = (router) => {
         });
     });
 
+    // Create new Product
+    router.post('/createProduct', async (req, res) => {
+        if(adminApproval(req)) {
+            const data = verifyData(req.body);
+            await stripe.products.create({
+                name: data.name,
+                active: data.active,
+                images: data.images,
+                description: data.description,
+                metadata: data.metadata,
+                type: 'good',
+                attributes: ["name"],
+            }).then(async prod => {
+                await stripe.skus.create({
+                    currency: 'usd',
+                    inventory: {
+                        type: 'infinite',
+                    },
+                    attributes: {
+                        name: data.name,
+                    },
+                    price: data.metadata.price,
+                    product: prod.id,
+                }).catch(err => {
+                    console.log(err);
+                });
+            }).catch(err => {
+                console.log(err);
+                res.send(err);
+            });
+            res.send('success');
+        } else {
+            res.send("Unapproved Authorization");
+        }
+    });
+
     // Update Product details
     router.post('/updateProduct', async (req, res) => {
         if(adminApproval(req)) {
@@ -54,42 +90,6 @@ const managementEndpoints = (router) => {
                 console.log(err);
                 res.send(err);
             });
-        } else {
-            res.send("Unapproved Authorization");
-        }
-    });
-
-    // Create new Product
-    router.post('/createProduct', async (req, res) => {
-        if(adminApproval(req)) {
-            const data = verifyData(req.body);
-            await stripe.products.create({
-                name: data.name,
-                active: data.active,
-                images: data.images,
-                description: data.description,
-                metadata: data.metadata,
-                type: 'good',
-                attributes: ["name"],
-            }).then(async prod => {
-                await stripe.skus.create({
-                    currency: 'usd',
-                    inventory: {
-                        type: 'infinite',
-                    },
-                    attributes: {
-                        name: data.name,
-                    },
-                    price: data.metadata.price,
-                    product: prod.id,
-                }).catch(err => {
-                    console.log(err);
-                });
-            }).catch(err => {
-                console.log(err);
-                res.send(err);
-            });
-            res.send('success');
         } else {
             res.send("Unapproved Authorization");
         }
