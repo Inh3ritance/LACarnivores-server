@@ -103,12 +103,16 @@ const managementEndpoints = (router) => {
     router.post('/deleteProduct', async (req, res) => {
         if(adminApproval(req) && req.body.password == process.env.DELETE_PRODUCT) {
             let sku = await getSku(req.body.id);
+            console.log("past password")
             if(req.body.review_id !== undefined) {
+                console.log("past review id")
                 adminClient.query(q.Exists(q.Ref(q.Collection('Reviews'), req.body.review_id)))
                 .then(async ret => {
                     if(ret) {
+                        console.log("inside return true")
                         adminClient.query(q.Delete(q.Ref(q.Collection('Reviews'), req.body.review_id)))
                         .then(async () => {
+                            console.log("deletingt stripe stuff")
                             await deleteProducts(sku.id, req.body.id);
                         }).catch(err => {
                             console.log(err);
@@ -122,6 +126,7 @@ const managementEndpoints = (router) => {
             }
             await deleteProducts(sku.id, req.body.id);
         } else {
+            console.log("unnApproved");
             res.send("Unapproved Authorization");
         }
     });
