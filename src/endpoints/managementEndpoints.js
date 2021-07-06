@@ -1,6 +1,7 @@
+const stripe = require('stripe')(process.env.API_KEY);
+const faunadb = require('faunadb');
 const { verifyData, adminApproval, deleteProducts } = require('../funct/managementFunctions');
 const { getSku } = require('../funct/stripeUtils');
-const stripe = require('stripe')(process.env.API_KEY);
 const q = faunadb.query;
 const adminClient = new faunadb.Client({ 
     secret: process.env.FAUNA,
