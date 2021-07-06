@@ -54,7 +54,7 @@ function adminApproval(req) {
     return false;
 }
 
-async function deleteProducts(sku_id, product_id) {
+async function deleteProducts(sku_id, product_id, res) {
     await stripe.skus.del(sku_id)
     .then(async () => {
         console.log("deleted sku");
