@@ -1,3 +1,4 @@
+const stripe = require('stripe')(process.env.API_KEY);
 const jwt = require('jsonwebtoken');
 
 // JSON web token, strip bearer
@@ -53,8 +54,24 @@ function adminApproval(req) {
     return false;
 }
 
+async function deleteProducts(sku_id, product_id) {
+    await stripe.skus.del(sku_id)
+    .then(async () => {
+        await stripe.products.del(product_id)
+        .then(res.send("success"))
+        .catch(err => {
+            console.log(err);
+            res.send(err);
+        });
+    }).catch(err => {
+        console.log(err);
+        res.send(err);
+    });
+}
+
 module.exports = {
     verifyData,
     verifyToken,
     adminApproval,
+    deleteProducts,
 }

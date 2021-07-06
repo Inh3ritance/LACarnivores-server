@@ -1,6 +1,10 @@
-const { verifyData, adminApproval } = require('../funct/managementFunctions');
+const { verifyData, adminApproval, deleteProducts } = require('../funct/managementFunctions');
 const { getSku } = require('../funct/stripeUtils');
 const stripe = require('stripe')(process.env.API_KEY);
+const q = faunadb.query;
+const adminClient = new faunadb.Client({ 
+    secret: process.env.FAUNA,
+});
 
 const managementEndpoints = (router) => {
     // Verify admin to enter Masterpage
@@ -24,7 +28,7 @@ const managementEndpoints = (router) => {
 
     // Create new Product
     router.post('/createProduct', async (req, res) => {
-        if(adminApproval(req)) {
+        if(adminApproval(req) && req.body.password == process.env.CREATE_PRODUCT) {
             const data = verifyData(req.body);
             await stripe.products.create({
                 name: data.name,
@@ -60,7 +64,7 @@ const managementEndpoints = (router) => {
 
     // Update Product details
     router.post('/updateProduct', async (req, res) => {
-        if(adminApproval(req)) {
+        if(adminApproval(req) && req.body.password == process.env.UPDATE_PRODUCT) {
             const data = verifyData(req.body);
             let sku = await getSku(req.body.id);
             await stripe.skus.update(
@@ -94,6 +98,33 @@ const managementEndpoints = (router) => {
             res.send("Unapproved Authorization");
         }
     });
+
+    router.post('/deleteProduct', async (req, res) => {
+        if(adminApproval(req) && req.body.password == process.env.DELETE_PRODUCT) {
+            let sku = await getSku(req.body.id);
+            if(req.body.review_id !== undefined) {
+                adminClient.query(q.Exists(q.Ref(q.Collection('Reviews'), req.body.review_id)))
+                .then(async ret => {
+                    if(ret) {
+                        adminClient.query(q.Delete(q.Ref(q.Collection('Reviews'), req.body.review_id)))
+                        .then(async () => {
+                            await deleteProducts(sku.id, req.body.id);
+                        }).catch(err => {
+                            console.log(err);
+                            res.send(err);
+                        });
+                    }
+                }).catch(err => {
+                    console.log(err);
+                    res.send(err);
+                })
+            }
+            await deleteProducts(sku.id, req.body.id);
+        } else {
+            res.send("Unapproved Authorization");
+        }
+    });
+
 }
 
 module.exports = {

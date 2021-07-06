@@ -1,6 +1,6 @@
 const faunadb = require('faunadb');
-const q = faunadb.query;
 const stripe = require('stripe')(process.env.API_KEY);
+const q = faunadb.query;
 const adminClient = new faunadb.Client({ 
     secret: process.env.FAUNA,
 });
