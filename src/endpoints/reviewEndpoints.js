@@ -6,8 +6,10 @@ const adminClient = new faunadb.Client({
 });
 
 const reviewEndpoints = (router) => {
+
     router.post('/createReview', async (req, res) => {
-        const str = req.body.review_id === undefined ? '0' : req.body.review_id;
+        const str = req.body.review_id === undefined ? '0' : req.body.review_id; // check review_id from prodct_id instead
+        const date = new Date();
         adminClient.query(q.Exists(q.Ref(q.Collection('Reviews'), str)))
         .then(ret => {
             if(!ret) {
@@ -19,6 +21,7 @@ const reviewEndpoints = (router) => {
                                 users: [req.body.user],
                                 reviews: [req.body.review],
                                 ratings: [req.body.rating],
+                                dates: [date.toLocaleDateString('en-US')],
                         },
                     })
                 )
@@ -46,6 +49,8 @@ const reviewEndpoints = (router) => {
                     reviewArr.push(req.body.review);
                     var rateArr = data.data.ratings;
                     rateArr.push(req.body.rating);
+                    var datesArr = data.data.dates;
+                    datesArr.push(date.toLocaleDateString('en-US'));
                     adminClient.query(
                         q.Update(q.Ref(q.Collection('Reviews'), req.body.review_id),
                             {
@@ -53,6 +58,7 @@ const reviewEndpoints = (router) => {
                                     users: userArr,
                                     reviews: reviewArr,
                                     ratings: rateArr,
+                                    dates: datesArr,
                                 }
                             }
                         )
